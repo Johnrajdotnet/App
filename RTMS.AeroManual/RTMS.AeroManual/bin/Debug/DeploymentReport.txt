@@ -1,0 +1,62 @@
+﻿** Highlights
+     Tables that will be rebuilt
+       None
+     Clustered indexes that will be dropped
+       None
+     Clustered indexes that will be created
+       None
+     Possible data issues
+       None
+
+** User actions
+     Create
+       [CollectTM] (Schema)
+       [SyncTM] (Schema)
+       [TManual] (Schema)
+       [TManual].[OT_Manual_EIPC_Details] (Table)
+       [TManual].[OT_Manual_Information_Details] (Table)
+       [TManual].[ST_Publication_Node_Details] (Table)
+       [TManual].[ST_Engine_Publication_Details] (Table)
+       [TManual].[ST_Engine_Mark_Type] (Table)
+       [TManual].[ST_Engine_Series_Type] (Table)
+       [TManual].[ST_Engine_Type] (Table)
+       [dbo].[DatabaseLog] (Table)
+       [dbo].[ErrorLog] (Table)
+       [dbo].[FeedbackDetails] (Table)
+       [dbo].[RTMSBuildVersion] (Table)
+       [TManual].[DF_OT_Manual_Effectivity_Details_Active] (Default Constraint)
+       [TManual].[DF_OT_Manual_Effectivity_Details_CreatedDate] (Default Constraint)
+       [TManual].[DF_OT_Publication_Manual_Details_CreatedDate] (Default Constraint)
+       [TManual].[DF_ST_Publication_Node_Details_IsDrawingAvailable] (Default Constraint)
+       [TManual].[DF_ST_Publication_Node_Details_SyncStatus] (Default Constraint)
+       [TManual].[DF_ST_Builder_Publication_Node_Details_CreatedDate] (Default Constraint)
+       [TManual].[DF_ST_Engine_Publication_Details_SyncStatus] (Default Constraint)
+       [TManual].[DF_ST_Engine_Publication_Details_Active] (Default Constraint)
+       [TManual].[DF_ST_Publication_Node_Details_CreatedDate] (Default Constraint)
+       [TManual].[DF_ST_Engine_Mark_Type_CreatedDate] (Default Constraint)
+       [TManual].[DF_ST_Engine_Series_Type_CreatedDate] (Default Constraint)
+       [TManual].[DF_ST_Engine_Type_CreatedDate] (Default Constraint)
+       [dbo].[DF_ErrorLog_ErrorTime] (Default Constraint)
+       [dbo].[DF_FeedbackDetails_CreatedDate] (Default Constraint)
+       [TManual].[FK_OT_Manual_Effectivity_Details_OT_Publication_Manual_Details] (Foreign Key)
+       [TManual].[FK_OT_Publication_Manual_Details_ST_Builder_Publication_Node_Details] (Foreign Key)
+       [TManual].[FK_ST_Engine_Publication_Details_ST_Engine_Mark_Type] (Foreign Key)
+       [TManual].[FK_ST_Engine_Publication_Details_ST_Engine_Series_Type] (Foreign Key)
+       [TManual].[FK_ST_Engine_Publication_Details_ST_Engine_Type] (Foreign Key)
+       [TManual].[FK_ST_Engine_Mark_Type_ST_Engine_Series_Type] (Foreign Key)
+       [TManual].[FK_ST_Engine_Series_Type_ST_Engine_Type1] (Foreign Key)
+       [dbo].[PrintError] (Procedure)
+       [dbo].[LogError] (Procedure)
+       [CollectTM].[GetPublicationNodeByPublication] (Procedure)
+       [CollectTM].[GetAllPublicationTaskNode] (Procedure)
+       [SyncTM].[UpdateSyncDetailsForTM] (Procedure)
+       [SyncTM].[GetEngineSeriesDetails] (Procedure)
+       [SyncTM].[GetEnginePublicationDetails] (Procedure)
+       [SyncTM].[GetEngineMarkDetails] (Procedure)
+       [SyncTM].[GetCountOfSyncDetails] (Procedure)
+       [TManual].[InsertEngineMarkDetails] (Procedure)
+       [TManual].[InsertPublicationNodeDetails] (Procedure)
+       [TManual].[InsertEnginePublicationDetails] (Procedure)
+       [dbo].[GetCredentialDetails] (Procedure)
+
+** Supporting actions

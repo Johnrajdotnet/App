@@ -1,0 +1,4707 @@
+<?xml version="1.0" encoding="utf-8"?>
+<DataSchemaModel FileFormatVersion="1.2" SchemaVersion="2.4" DspName="Microsoft.Data.Tools.Schema.Sql.Sql120DatabaseSchemaProvider" CollationLcid="1033" CollationCaseSensitive="False" xmlns="http://schemas.microsoft.com/sqlserver/dac/Serialization/2012/02">
+	<Header>
+		<CustomData Category="AnsiNulls">
+			<Metadata Name="AnsiNulls" Value="False" />
+		</CustomData>
+		<CustomData Category="QuotedIdentifier">
+			<Metadata Name="QuotedIdentifier" Value="False" />
+		</CustomData>
+		<CustomData Category="CompatibilityMode">
+			<Metadata Name="CompatibilityMode" Value="120" />
+		</CustomData>
+		<CustomData Category="Reference" Type="Assembly">
+			<Metadata Name="LogicalName" Value="RTMS.AeroManual.dll" />
+			<Metadata Name="FileName" Value="C:\USERS\1013238\DOCUMENTS\VISUAL STUDIO 2015\PROJECTS\RTMS.AEROMANUAL\RTMS.AEROMANUAL\OBJ\DEBUG\RTMS.AEROMANUAL.DLL" />
+			<Metadata Name="AssemblyName" Value="RTMS.AeroManual" />
+			<Metadata Name="PermissionSet" Value="SAFE" />
+			<Metadata Name="Owner" Value="" />
+			<Metadata Name="GenerateSqlClrDdl" Value="True" />
+			<Metadata Name="IsVisible" Value="True" />
+			<Metadata Name="IsModelAware" Value="True" />
+			<Metadata Name="SkipCreationIfEmpty" Value="True" />
+			<Metadata Name="AssemblySymbolsName" Value="c:\users\1013238\documents\visual studio 2015\Projects\RTMS.AeroManual\RTMS.AeroManual\obj\Debug\RTMS.AeroManual.pdb" />
+		</CustomData>
+		<CustomData Category="SqlCmdVariables" Type="SqlCmdVariable" />
+	</Header>
+	<Model>
+		<Element Type="SqlDatabaseOptions">
+			<Property Name="Collation" Value="SQL_Latin1_General_CP1_CI_AS" />
+			<Property Name="IsAnsiPaddingOn" Value="False" />
+			<Property Name="IsQuotedIdentifierOn" Value="False" />
+			<Property Name="IsCursorDefaultScopeGlobal" Value="True" />
+			<Property Name="IsTornPageProtectionOn" Value="False" />
+			<Property Name="RecoveryMode" Value="1" />
+			<Property Name="IsFullTextEnabled" Value="True" />
+			<Property Name="DefaultLanguage" Value="" />
+			<Property Name="DefaultFullTextLanguage" Value="" />
+			<Relationship Name="DefaultFilegroup">
+				<Entry>
+					<References ExternalSource="BuiltIns" Name="[PRIMARY]" />
+				</Entry>
+			</Relationship>
+		</Element>
+		<Element Type="SqlSchema" Name="[CollectTM]">
+			<Relationship Name="Authorizer">
+				<Entry>
+					<References ExternalSource="BuiltIns" Name="[dbo]" />
+				</Entry>
+			</Relationship>
+		</Element>
+		<Element Type="SqlProcedure" Name="[CollectTM].[GetAllPublicationTaskNode]">
+			<Property Name="BodyScript">
+				<Value QuotedIdentifiers="True" AnsiNulls="True"><![CDATA[
+
+BEGIN TRY
+	-- SET NOCOUNT ON added to prevent extra result sets from
+	-- interfering with SELECT statements. 
+	SET NOCOUNT ON;
+
+    -- Insert statements for procedure here	
+	SELECT 
+				pn.Id as PublicationTaskNodeId,
+				pn.EnginePublicationId as EnginePublicationId,
+				et.Id as EngineTypeId,
+				es.Id as EngineSeriesId,
+				em.Id as EngineMarkId,
+				et.EngineName as EngineTypeName,
+				es.EngineSeriesName as EngineSeriesName,
+				em.EngineMarkName as EngineMarkName,
+				es.EngineMarkPageTitle as EngineMarkPageTitle,
+				em.EPublicationTitleName as EnginePublicationTitle,
+				ep.EnginePublicationLongName as EnginePublicationLongName,
+				ep.EnginePublicationShotName  as EnginePublicationShotName,
+				pn.ChapterLevel as ChapterLevel,
+				pn.SectionLevel as SectionLevel,
+				pn.PageBlockLevelName as PageBlockLevelName,
+				pn.FunctionalCode as FunctionalCode,
+				pn.TaskLevelNumber as TaskLevelNumber,
+				pn.TaskLevelName as TaskLevelName,
+				em.EngineMarkName+' '+ep.EnginePublicationShotName+':' as TaskLevelPageTitle,
+				pn.SequenceOrder as SequenceOrder,
+				pn.IsDrawingAvailable as IsDrawingAvailable,
+				pn.IssueDate as IssueDate,
+				pn.SyncDate as SyncDate,
+				pn.SyncStatus as SyncStatus,
+				pn.Active as Active,
+				pn.CreatedDate as CreatedDate,
+				pn.ModifiedDate as ModifiedDate
+
+	FROM        [TManual].[ST_Publication_Node_Details]  pn
+			INNER JOIN [TManual].ST_Engine_Publication_Details ep ON ep.Id = pn.EnginePublicationId
+			INNER JOIN [TManual].ST_Engine_Mark_Type em ON em.Id = ep.EngineMarkId
+			INNER JOIN [TManual].ST_Engine_Series_Type es ON es.Id = em.EngineSeriesTypeId
+			INNER JOIN [TManual].ST_Engine_Type et ON et.Id = es.EngineTypeId
+
+	WHERE 
+				(ep.EngineTypeId=(ISNULL(@engineTypeId, ep.EngineTypeId)) AND ep.EngineSeriesId=(ISNULL(@engineSeriesId, ep.EngineSeriesId))
+			AND ep.EngineMarkId=(ISNULL(@engineMarkId, ep.EngineMarkId)))	
+			AND UPPER(ISNULL(pn.SyncStatus,'NotStarted'))='NotStarted'
+			AND	pn.Active=1 AND em.Active =1 AND ep.Active =1 AND et.Active =1
+			AND pn.IsDrawingAvailable=1
+	ORDER BY    ep.EngineTypeId,ep.EngineSeriesId,ep.EngineMarkId,ep.SequenceOrder,pn.SequenceOrder
+
+
+END TRY
+BEGIN CATCH
+   EXECUTE [dbo].[LogError]
+END CATCH]]></Value>
+			</Property>
+			<Property Name="IsAnsiNullsOn" Value="True" />
+			<Relationship Name="BodyDependencies">
+				<Entry>
+					<References Name="[TManual].[ST_Publication_Node_Details]" />
+				</Entry>
+				<Entry>
+					<References Name="[TManual].[ST_Engine_Publication_Details]" />
+				</Entry>
+				<Entry>
+					<References Name="[TManual].[ST_Engine_Publication_Details].[Id]" />
+				</Entry>
+				<Entry>
+					<References Name="[TManual].[ST_Publication_Node_Details].[EnginePublicationId]" />
+				</Entry>
+				<Entry>
+					<References Name="[TManual].[ST_Engine_Mark_Type]" />
+				</Entry>
+				<Entry>
+					<References Name="[TManual].[ST_Engine_Mark_Type].[Id]" />
+				</Entry>
+				<Entry>
+					<References Name="[TManual].[ST_Engine_Publication_Details].[EngineMarkId]" />
+				</Entry>
+				<Entry>
+					<References Name="[TManual].[ST_Engine_Series_Type]" />
+				</Entry>
+				<Entry>
+					<References Name="[TManual].[ST_Engine_Series_Type].[Id]" />
+				</Entry>
+				<Entry>
+					<References Name="[TManual].[ST_Engine_Mark_Type].[EngineSeriesTypeId]" />
+				</Entry>
+				<Entry>
+					<References Name="[TManual].[ST_Engine_Type]" />
+				</Entry>
+				<Entry>
+					<References Name="[TManual].[ST_Engine_Type].[Id]" />
+				</Entry>
+				<Entry>
+					<References Name="[TManual].[ST_Engine_Series_Type].[EngineTypeId]" />
+				</Entry>
+				<Entry>
+					<References Name="[TManual].[ST_Publication_Node_Details].[Id]" />
+				</Entry>
+				<Entry>
+					<References Name="[TManual].[ST_Publication_Node_Details].[EnginePublicationId]" />
+				</Entry>
+				<Entry>
+					<References Name="[TManual].[ST_Engine_Type].[Id]" />
+				</Entry>
+				<Entry>
+					<References Name="[TManual].[ST_Engine_Series_Type].[Id]" />
+				</Entry>
+				<Entry>
+					<References Name="[TManual].[ST_Engine_Mark_Type].[Id]" />
+				</Entry>
+				<Entry>
+					<References Name="[TManual].[ST_Engine_Type].[EngineName]" />
+				</Entry>
+				<Entry>
+					<References Name="[TManual].[ST_Engine_Series_Type].[EngineSeriesName]" />
+				</Entry>
+				<Entry>
+					<References Name="[TManual].[ST_Engine_Mark_Type].[EngineMarkName]" />
+				</Entry>
+				<Entry>
+					<References Name="[TManual].[ST_Engine_Series_Type].[EngineMarkPageTitle]" />
+				</Entry>
+				<Entry>
+					<References Name="[TManual].[ST_Engine_Mark_Type].[EPublicationTitleName]" />
+				</Entry>
+				<Entry>
+					<References Name="[TManual].[ST_Engine_Publication_Details].[EnginePublicationLongName]" />
+				</Entry>
+				<Entry>
+					<References Name="[TManual].[ST_Engine_Publication_Details].[EnginePublicationShotName]" />
+				</Entry>
+				<Entry>
+					<References Name="[TManual].[ST_Publication_Node_Details].[ChapterLevel]" />
+				</Entry>
+				<Entry>
+					<References Name="[TManual].[ST_Publication_Node_Details].[SectionLevel]" />
+				</Entry>
+				<Entry>
+					<References Name="[TManual].[ST_Publication_Node_Details].[PageBlockLevelName]" />
+				</Entry>
+				<Entry>
+					<References Name="[TManual].[ST_Publication_Node_Details].[FunctionalCode]" />
+				</Entry>
+				<Entry>
+					<References Name="[TManual].[ST_Publication_Node_Details].[TaskLevelNumber]" />
+				</Entry>
+				<Entry>
+					<References Name="[TManual].[ST_Publication_Node_Details].[TaskLevelName]" />
+				</Entry>
+				<Entry>
+					<References Name="[TManual].[ST_Engine_Mark_Type].[EngineMarkName]" />
+				</Entry>
+				<Entry>
+					<References Name="[TManual].[ST_Engine_Publication_Details].[EnginePublicationShotName]" />
+				</Entry>
+				<Entry>
+					<References Name="[TManual].[ST_Publication_Node_Details].[SequenceOrder]" />
+				</Entry>
+				<Entry>
+					<References Name="[TManual].[ST_Publication_Node_Details].[IsDrawingAvailable]" />
+				</Entry>
+				<Entry>
+					<References Name="[TManual].[ST_Publication_Node_Details].[IssueDate]" />
+				</Entry>
+				<Entry>
+					<References Name="[TManual].[ST_Publication_Node_Details].[SyncDate]" />
+				</Entry>
+				<Entry>
+					<References Name="[TManual].[ST_Publication_Node_Details].[SyncStatus]" />
+				</Entry>
+				<Entry>
+					<References Name="[TManual].[ST_Publication_Node_Details].[Active]" />
+				</Entry>
+				<Entry>
+					<References Name="[TManual].[ST_Publication_Node_Details].[CreatedDate]" />
+				</Entry>
+				<Entry>
+					<References Name="[TManual].[ST_Publication_Node_Details].[ModifiedDate]" />
+				</Entry>
+				<Entry>
+					<References Name="[TManual].[ST_Engine_Publication_Details].[EngineTypeId]" />
+				</Entry>
+				<Entry>
+					<References Name="[CollectTM].[GetAllPublicationTaskNode].[@engineTypeId]" />
+				</Entry>
+				<Entry>
+					<References Name="[TManual].[ST_Engine_Publication_Details].[EngineSeriesId]" />
+				</Entry>
+				<Entry>
+					<References Name="[CollectTM].[GetAllPublicationTaskNode].[@engineSeriesId]" />
+				</Entry>
+				<Entry>
+					<References Name="[TManual].[ST_Engine_Publication_Details].[EngineMarkId]" />
+				</Entry>
+				<Entry>
+					<References Name="[CollectTM].[GetAllPublicationTaskNode].[@engineMarkId]" />
+				</Entry>
+				<Entry>
+					<References Name="[TManual].[ST_Publication_Node_Details].[SyncStatus]" />
+				</Entry>
+				<Entry>
+					<References Name="[TManual].[ST_Publication_Node_Details].[Active]" />
+				</Entry>
+				<Entry>
+					<References Name="[TManual].[ST_Engine_Mark_Type].[Active]" />
+				</Entry>
+				<Entry>
+					<References Name="[TManual].[ST_Engine_Publication_Details].[Active]" />
+				</Entry>
+				<Entry>
+					<References Name="[TManual].[ST_Engine_Type].[Active]" />
+				</Entry>
+				<Entry>
+					<References Name="[TManual].[ST_Publication_Node_Details].[IsDrawingAvailable]" />
+				</Entry>
+				<Entry>
+					<References Name="[TManual].[ST_Engine_Publication_Details].[SequenceOrder]" />
+				</Entry>
+				<Entry>
+					<References Name="[TManual].[ST_Publication_Node_Details].[SequenceOrder]" />
+				</Entry>
+				<Entry>
+					<References Name="[dbo].[LogError]" />
+				</Entry>
+			</Relationship>
+			<Relationship Name="Parameters">
+				<Entry>
+					<Element Type="SqlSubroutineParameter" Name="[CollectTM].[GetAllPublicationTaskNode].[@engineTypeId]">
+						<Relationship Name="Type">
+							<Entry>
+								<Element Type="SqlTypeSpecifier">
+									<Relationship Name="Type">
+										<Entry>
+											<References ExternalSource="BuiltIns" Name="[int]" />
+										</Entry>
+									</Relationship>
+								</Element>
+							</Entry>
+						</Relationship>
+					</Element>
+				</Entry>
+				<Entry>
+					<Element Type="SqlSubroutineParameter" Name="[CollectTM].[GetAllPublicationTaskNode].[@engineSeriesId]">
+						<Relationship Name="Type">
+							<Entry>
+								<Element Type="SqlTypeSpecifier">
+									<Relationship Name="Type">
+										<Entry>
+											<References ExternalSource="BuiltIns" Name="[bigint]" />
+										</Entry>
+									</Relationship>
+								</Element>
+							</Entry>
+						</Relationship>
+					</Element>
+				</Entry>
+				<Entry>
+					<Element Type="SqlSubroutineParameter" Name="[CollectTM].[GetAllPublicationTaskNode].[@engineMarkId]">
+						<Relationship Name="Type">
+							<Entry>
+								<Element Type="SqlTypeSpecifier">
+									<Relationship Name="Type">
+										<Entry>
+											<References ExternalSource="BuiltIns" Name="[bigint]" />
+										</Entry>
+									</Relationship>
+								</Element>
+							</Entry>
+						</Relationship>
+					</Element>
+				</Entry>
+			</Relationship>
+			<Relationship Name="Schema">
+				<Entry>
+					<References Name="[CollectTM]" />
+				</Entry>
+			</Relationship>
+			<Annotation Type="SysCommentsObjectAnnotation">
+				<Property Name="CreateOffset" Value="262" />
+				<Property Name="Length" Value="2717" />
+				<Property Name="StartLine" Value="1" />
+				<Property Name="StartColumn" Value="1" />
+				<Property Name="HeaderContents" Value="&#xD;&#xA;-- =============================================&#xD;&#xA;-- Author:&#x9;&#x9;Vyshna&#xD;&#xA;-- Create date: 02/05/2018&#xD;&#xA;-- Description:&#x9;Get All Node Publication&#xD;&#xA;-- exec [CollectTM].[GetPublicationNodeForCollection] NULL,NULL,NULL&#xD;&#xA;-- =============================================&#xD;&#xA;CREATE PROCEDURE [CollectTM].[GetAllPublicationTaskNode] &#xD;&#xA;&#x9;-- Add the parameters for the stored procedure here&#xD;&#xA;&#x9;@engineTypeId int,&#xD;&#xA;&#x9;@engineSeriesId bigint,&#xD;&#xA;&#x9;@engineMarkId bigint&#xD;&#xA;&#xD;&#xA;AS" />
+			</Annotation>
+		</Element>
+		<Element Type="SqlProcedure" Name="[CollectTM].[GetPublicationNodeByPublication]">
+			<Property Name="BodyScript">
+				<Value QuotedIdentifiers="True" AnsiNulls="True"><![CDATA[
+BEGIN TRY
+	-- SET NOCOUNT ON added to prevent extra result sets from
+	-- interfering with SELECT statements. 
+	SET NOCOUNT ON;
+
+    -- Insert statements for procedure here
+
+		SELECT 
+			pn.Id as PublicationTaskNodeId,
+		    pn.EnginePublicationId as EnginePublicationId,
+			et.EngineName as EngineTypeName,
+			es.EngineSeriesName as EngineSeriesName,
+			em.EngineMarkName as EngineMarkName,
+			es.EngineMarkPageTitle as EngineMarkPageTitle,
+			em.EPublicationTitleName as EnginePublicationTitle,
+			ep.EnginePublicationLongName as EnginePublicationLongName,
+			ep.EnginePublicationShotName  as EnginePublicationShotName,
+			pn.ChapterLevel as ChapterLevel,
+			pn.SectionLevel as SectionLevel,
+			pn.PageBlockLevelName as PageBlockLevelName,
+			pn.FunctionalCode as FunctionalCode,
+			pn.TaskLevelNumber as TaskLevelNumber,
+			pn.TaskLevelName as TaskLevelName,
+			em.EngineMarkName+' '+ep.EnginePublicationShotName+':' as TaskLevelPageTitle,
+			pn.SequenceNumber as SequenceNumber,
+			pn.IsDrawingAvailable as IsDrawingAvailable,
+			pn.IssueDate as IssueDate,
+			pn.SyncDate as SyncDate,
+			pn.SyncStatus as SyncStatus,
+			pn.Active as Active,
+			pn.CreatedDate as CreatedDate,
+			pn.ModifiedDate as ModifiedDate
+
+	FROM [TManual].[ST_Publication_Node_Details]  pn
+			INNER JOIN [TManual].ST_Engine_Publication_Details ep ON ep.Id = pn.EnginePublicationId
+			INNER JOIN [TManual].ST_Engine_Mark_Type em ON em.Id = ep.EngineMarkId
+			INNER JOIN [TManual].ST_Engine_Series_Type es ON es.Id = em.EngineSeriesTypeId
+			INNER JOIN [TManual].ST_Engine_Type et ON et.Id = es.EngineTypeId
+	WHERE	
+			EnginePublicationId = ISNULL(@enginePublicationId, EnginePublicationId)	
+			AND	pn.Active=1 AND em.Active =1 AND ep.Active =1 AND et.Active =1
+            AND UPPER(ISNULL(pn.SyncStatus,'NotStarted'))='NotStarted'
+
+END TRY
+BEGIN CATCH
+   EXECUTE [dbo].[LogError]
+END CATCH]]></Value>
+			</Property>
+			<Property Name="IsAnsiNullsOn" Value="True" />
+			<Relationship Name="BodyDependencies">
+				<Entry>
+					<References Name="[TManual].[ST_Publication_Node_Details]" />
+				</Entry>
+				<Entry>
+					<References Name="[TManual].[ST_Engine_Publication_Details]" />
+				</Entry>
+				<Entry>
+					<References Name="[TManual].[ST_Engine_Publication_Details].[Id]" />
+				</Entry>
+				<Entry>
+					<References Name="[TManual].[ST_Publication_Node_Details].[EnginePublicationId]" />
+				</Entry>
+				<Entry>
+					<References Name="[TManual].[ST_Engine_Mark_Type]" />
+				</Entry>
+				<Entry>
+					<References Name="[TManual].[ST_Engine_Mark_Type].[Id]" />
+				</Entry>
+				<Entry>
+					<References Name="[TManual].[ST_Engine_Publication_Details].[EngineMarkId]" />
+				</Entry>
+				<Entry>
+					<References Name="[TManual].[ST_Engine_Series_Type]" />
+				</Entry>
+				<Entry>
+					<References Name="[TManual].[ST_Engine_Series_Type].[Id]" />
+				</Entry>
+				<Entry>
+					<References Name="[TManual].[ST_Engine_Mark_Type].[EngineSeriesTypeId]" />
+				</Entry>
+				<Entry>
+					<References Name="[TManual].[ST_Engine_Type]" />
+				</Entry>
+				<Entry>
+					<References Name="[TManual].[ST_Engine_Type].[Id]" />
+				</Entry>
+				<Entry>
+					<References Name="[TManual].[ST_Engine_Series_Type].[EngineTypeId]" />
+				</Entry>
+				<Entry>
+					<References Name="[TManual].[ST_Publication_Node_Details].[Id]" />
+				</Entry>
+				<Entry>
+					<References Name="[TManual].[ST_Publication_Node_Details].[EnginePublicationId]" />
+				</Entry>
+				<Entry>
+					<References Name="[TManual].[ST_Engine_Type].[EngineName]" />
+				</Entry>
+				<Entry>
+					<References Name="[TManual].[ST_Engine_Series_Type].[EngineSeriesName]" />
+				</Entry>
+				<Entry>
+					<References Name="[TManual].[ST_Engine_Mark_Type].[EngineMarkName]" />
+				</Entry>
+				<Entry>
+					<References Name="[TManual].[ST_Engine_Series_Type].[EngineMarkPageTitle]" />
+				</Entry>
+				<Entry>
+					<References Name="[TManual].[ST_Engine_Mark_Type].[EPublicationTitleName]" />
+				</Entry>
+				<Entry>
+					<References Name="[TManual].[ST_Engine_Publication_Details].[EnginePublicationLongName]" />
+				</Entry>
+				<Entry>
+					<References Name="[TManual].[ST_Engine_Publication_Details].[EnginePublicationShotName]" />
+				</Entry>
+				<Entry>
+					<References Name="[TManual].[ST_Publication_Node_Details].[ChapterLevel]" />
+				</Entry>
+				<Entry>
+					<References Name="[TManual].[ST_Publication_Node_Details].[SectionLevel]" />
+				</Entry>
+				<Entry>
+					<References Name="[TManual].[ST_Publication_Node_Details].[PageBlockLevelName]" />
+				</Entry>
+				<Entry>
+					<References Name="[TManual].[ST_Publication_Node_Details].[FunctionalCode]" />
+				</Entry>
+				<Entry>
+					<References Name="[TManual].[ST_Publication_Node_Details].[TaskLevelNumber]" />
+				</Entry>
+				<Entry>
+					<References Name="[TManual].[ST_Publication_Node_Details].[TaskLevelName]" />
+				</Entry>
+				<Entry>
+					<References Name="[TManual].[ST_Engine_Mark_Type].[EngineMarkName]" />
+				</Entry>
+				<Entry>
+					<References Name="[TManual].[ST_Engine_Publication_Details].[EnginePublicationShotName]" />
+				</Entry>
+				<Entry>
+					<References Name="[TManual].[ST_Publication_Node_Details].[SequenceNumber]" />
+				</Entry>
+				<Entry>
+					<References Name="[TManual].[ST_Publication_Node_Details].[IsDrawingAvailable]" />
+				</Entry>
+				<Entry>
+					<References Name="[TManual].[ST_Publication_Node_Details].[IssueDate]" />
+				</Entry>
+				<Entry>
+					<References Name="[TManual].[ST_Publication_Node_Details].[SyncDate]" />
+				</Entry>
+				<Entry>
+					<References Name="[TManual].[ST_Publication_Node_Details].[SyncStatus]" />
+				</Entry>
+				<Entry>
+					<References Name="[TManual].[ST_Publication_Node_Details].[Active]" />
+				</Entry>
+				<Entry>
+					<References Name="[TManual].[ST_Publication_Node_Details].[CreatedDate]" />
+				</Entry>
+				<Entry>
+					<References Name="[TManual].[ST_Publication_Node_Details].[ModifiedDate]" />
+				</Entry>
+				<Entry>
+					<References Name="[TManual].[ST_Publication_Node_Details].[EnginePublicationId]" />
+				</Entry>
+				<Entry>
+					<References Name="[CollectTM].[GetPublicationNodeByPublication].[@enginePublicationId]" />
+				</Entry>
+				<Entry>
+					<References Name="[TManual].[ST_Publication_Node_Details].[Active]" />
+				</Entry>
+				<Entry>
+					<References Name="[TManual].[ST_Engine_Mark_Type].[Active]" />
+				</Entry>
+				<Entry>
+					<References Name="[TManual].[ST_Engine_Publication_Details].[Active]" />
+				</Entry>
+				<Entry>
+					<References Name="[TManual].[ST_Engine_Type].[Active]" />
+				</Entry>
+				<Entry>
+					<References Name="[TManual].[ST_Publication_Node_Details].[SyncStatus]" />
+				</Entry>
+				<Entry>
+					<References Name="[dbo].[LogError]" />
+				</Entry>
+			</Relationship>
+			<Relationship Name="Parameters">
+				<Entry>
+					<Element Type="SqlSubroutineParameter" Name="[CollectTM].[GetPublicationNodeByPublication].[@enginePublicationId]">
+						<Relationship Name="Type">
+							<Entry>
+								<Element Type="SqlTypeSpecifier">
+									<Relationship Name="Type">
+										<Entry>
+											<References ExternalSource="BuiltIns" Name="[bigint]" />
+										</Entry>
+									</Relationship>
+								</Element>
+							</Entry>
+						</Relationship>
+					</Element>
+				</Entry>
+			</Relationship>
+			<Relationship Name="Schema">
+				<Entry>
+					<References Name="[CollectTM]" />
+				</Entry>
+			</Relationship>
+			<Annotation Type="SysCommentsObjectAnnotation">
+				<Property Name="CreateOffset" Value="252" />
+				<Property Name="Length" Value="2314" />
+				<Property Name="StartLine" Value="1" />
+				<Property Name="StartColumn" Value="1" />
+				<Property Name="HeaderContents" Value="&#xD;&#xA;-- =============================================&#xD;&#xA;-- Author:&#x9;&#x9;JohnRaj&#xD;&#xA;-- Create date: 1/12/2018&#xD;&#xA;-- Description:&#x9;Get All Node Publication&#xD;&#xA;-- exec [CollectTM].[GetPublicationNodeByPublication] null&#xD;&#xA;-- =============================================&#xD;&#xA;CREATE PROCEDURE [CollectTM].[GetPublicationNodeByPublication] &#xD;&#xA;&#x9;-- Add the parameters for the stored procedure here&#xD;&#xA;&#x9;@enginePublicationId bigint&#xD;&#xA;AS" />
+			</Annotation>
+		</Element>
+		<Element Type="SqlTable" Name="[dbo].[DatabaseLog]">
+			<Property Name="IsAnsiNullsOn" Value="True" />
+			<Relationship Name="Columns">
+				<Entry>
+					<Element Type="SqlSimpleColumn" Name="[dbo].[DatabaseLog].[DatabaseLogID]">
+						<Property Name="IsNullable" Value="False" />
+						<Property Name="IsIdentity" Value="True" />
+						<Relationship Name="TypeSpecifier">
+							<Entry>
+								<Element Type="SqlTypeSpecifier">
+									<Relationship Name="Type">
+										<Entry>
+											<References ExternalSource="BuiltIns" Name="[int]" />
+										</Entry>
+									</Relationship>
+								</Element>
+							</Entry>
+						</Relationship>
+					</Element>
+				</Entry>
+				<Entry>
+					<Element Type="SqlSimpleColumn" Name="[dbo].[DatabaseLog].[PostTime]">
+						<Property Name="IsNullable" Value="False" />
+						<Relationship Name="TypeSpecifier">
+							<Entry>
+								<Element Type="SqlTypeSpecifier">
+									<Relationship Name="Type">
+										<Entry>
+											<References ExternalSource="BuiltIns" Name="[datetime]" />
+										</Entry>
+									</Relationship>
+								</Element>
+							</Entry>
+						</Relationship>
+					</Element>
+				</Entry>
+				<Entry>
+					<Element Type="SqlSimpleColumn" Name="[dbo].[DatabaseLog].[DatabaseUser]">
+						<Property Name="IsNullable" Value="False" />
+						<Relationship Name="TypeSpecifier">
+							<Entry>
+								<Element Type="SqlTypeSpecifier">
+									<Relationship Name="Type">
+										<Entry>
+											<References ExternalSource="BuiltIns" Name="[sys].[sysname]" />
+										</Entry>
+									</Relationship>
+								</Element>
+							</Entry>
+						</Relationship>
+					</Element>
+				</Entry>
+				<Entry>
+					<Element Type="SqlSimpleColumn" Name="[dbo].[DatabaseLog].[Event]">
+						<Property Name="IsNullable" Value="False" />
+						<Relationship Name="TypeSpecifier">
+							<Entry>
+								<Element Type="SqlTypeSpecifier">
+									<Relationship Name="Type">
+										<Entry>
+											<References ExternalSource="BuiltIns" Name="[sys].[sysname]" />
+										</Entry>
+									</Relationship>
+								</Element>
+							</Entry>
+						</Relationship>
+					</Element>
+				</Entry>
+				<Entry>
+					<Element Type="SqlSimpleColumn" Name="[dbo].[DatabaseLog].[Schema]">
+						<Relationship Name="TypeSpecifier">
+							<Entry>
+								<Element Type="SqlTypeSpecifier">
+									<Relationship Name="Type">
+										<Entry>
+											<References ExternalSource="BuiltIns" Name="[sys].[sysname]" />
+										</Entry>
+									</Relationship>
+								</Element>
+							</Entry>
+						</Relationship>
+					</Element>
+				</Entry>
+				<Entry>
+					<Element Type="SqlSimpleColumn" Name="[dbo].[DatabaseLog].[Object]">
+						<Relationship Name="TypeSpecifier">
+							<Entry>
+								<Element Type="SqlTypeSpecifier">
+									<Relationship Name="Type">
+										<Entry>
+											<References ExternalSource="BuiltIns" Name="[sys].[sysname]" />
+										</Entry>
+									</Relationship>
+								</Element>
+							</Entry>
+						</Relationship>
+					</Element>
+				</Entry>
+				<Entry>
+					<Element Type="SqlSimpleColumn" Name="[dbo].[DatabaseLog].[TSQL]">
+						<Property Name="IsNullable" Value="False" />
+						<Relationship Name="TypeSpecifier">
+							<Entry>
+								<Element Type="SqlTypeSpecifier">
+									<Property Name="IsMax" Value="True" />
+									<Relationship Name="Type">
+										<Entry>
+											<References ExternalSource="BuiltIns" Name="[nvarchar]" />
+										</Entry>
+									</Relationship>
+								</Element>
+							</Entry>
+						</Relationship>
+					</Element>
+				</Entry>
+				<Entry>
+					<Element Type="SqlSimpleColumn" Name="[dbo].[DatabaseLog].[XmlEvent]">
+						<Property Name="IsNullable" Value="False" />
+						<Relationship Name="TypeSpecifier">
+							<Entry>
+								<Element Type="SqlXmlTypeSpecifier">
+									<Relationship Name="Type">
+										<Entry>
+											<References ExternalSource="BuiltIns" Name="[xml]" />
+										</Entry>
+									</Relationship>
+								</Element>
+							</Entry>
+						</Relationship>
+					</Element>
+				</Entry>
+			</Relationship>
+			<Relationship Name="Schema">
+				<Entry>
+					<References ExternalSource="BuiltIns" Name="[dbo]" />
+				</Entry>
+			</Relationship>
+			<Annotation Type="SqlInlineConstraintAnnotation" Disambiguator="3" />
+		</Element>
+		<Element Type="SqlDefaultConstraint" Name="[dbo].[DF_ErrorLog_ErrorTime]">
+			<Property Name="DefaultExpressionScript">
+				<Value QuotedIdentifiers="True" AnsiNulls="True"><![CDATA[(getdate())]]></Value>
+			</Property>
+			<Relationship Name="DefiningTable">
+				<Entry>
+					<References Name="[dbo].[ErrorLog]" />
+				</Entry>
+			</Relationship>
+			<Relationship Name="ForColumn">
+				<Entry>
+					<References Name="[dbo].[ErrorLog].[ErrorTime]" />
+				</Entry>
+			</Relationship>
+			<Annotation Type="SqlInlineConstraintAnnotation" Disambiguator="4" />
+		</Element>
+		<Element Type="SqlDefaultConstraint" Name="[dbo].[DF_FeedbackDetails_CreatedDate]">
+			<Property Name="DefaultExpressionScript">
+				<Value QuotedIdentifiers="True" AnsiNulls="True"><![CDATA[(getdate())]]></Value>
+			</Property>
+			<Relationship Name="DefiningTable">
+				<Entry>
+					<References Name="[dbo].[FeedbackDetails]" />
+				</Entry>
+			</Relationship>
+			<Relationship Name="ForColumn">
+				<Entry>
+					<References Name="[dbo].[FeedbackDetails].[CreatedDate]" />
+				</Entry>
+			</Relationship>
+			<Annotation Type="SqlInlineConstraintAnnotation" Disambiguator="5" />
+		</Element>
+		<Element Type="SqlTable" Name="[dbo].[ErrorLog]">
+			<Property Name="IsAnsiNullsOn" Value="True" />
+			<Relationship Name="Columns">
+				<Entry>
+					<Element Type="SqlSimpleColumn" Name="[dbo].[ErrorLog].[ErrorLogID]">
+						<Property Name="IsNullable" Value="False" />
+						<Property Name="IsIdentity" Value="True" />
+						<Relationship Name="TypeSpecifier">
+							<Entry>
+								<Element Type="SqlTypeSpecifier">
+									<Relationship Name="Type">
+										<Entry>
+											<References ExternalSource="BuiltIns" Name="[int]" />
+										</Entry>
+									</Relationship>
+								</Element>
+							</Entry>
+						</Relationship>
+					</Element>
+				</Entry>
+				<Entry>
+					<Element Type="SqlSimpleColumn" Name="[dbo].[ErrorLog].[ErrorTime]">
+						<Property Name="IsNullable" Value="False" />
+						<Relationship Name="TypeSpecifier">
+							<Entry>
+								<Element Type="SqlTypeSpecifier">
+									<Relationship Name="Type">
+										<Entry>
+											<References ExternalSource="BuiltIns" Name="[datetime]" />
+										</Entry>
+									</Relationship>
+								</Element>
+							</Entry>
+						</Relationship>
+						<AttachedAnnotation Disambiguator="4" />
+					</Element>
+				</Entry>
+				<Entry>
+					<Element Type="SqlSimpleColumn" Name="[dbo].[ErrorLog].[UserName]">
+						<Property Name="IsNullable" Value="False" />
+						<Relationship Name="TypeSpecifier">
+							<Entry>
+								<Element Type="SqlTypeSpecifier">
+									<Relationship Name="Type">
+										<Entry>
+											<References ExternalSource="BuiltIns" Name="[sys].[sysname]" />
+										</Entry>
+									</Relationship>
+								</Element>
+							</Entry>
+						</Relationship>
+					</Element>
+				</Entry>
+				<Entry>
+					<Element Type="SqlSimpleColumn" Name="[dbo].[ErrorLog].[ErrorNumber]">
+						<Property Name="IsNullable" Value="False" />
+						<Relationship Name="TypeSpecifier">
+							<Entry>
+								<Element Type="SqlTypeSpecifier">
+									<Relationship Name="Type">
+										<Entry>
+											<References ExternalSource="BuiltIns" Name="[int]" />
+										</Entry>
+									</Relationship>
+								</Element>
+							</Entry>
+						</Relationship>
+					</Element>
+				</Entry>
+				<Entry>
+					<Element Type="SqlSimpleColumn" Name="[dbo].[ErrorLog].[ErrorSeverity]">
+						<Relationship Name="TypeSpecifier">
+							<Entry>
+								<Element Type="SqlTypeSpecifier">
+									<Relationship Name="Type">
+										<Entry>
+											<References ExternalSource="BuiltIns" Name="[int]" />
+										</Entry>
+									</Relationship>
+								</Element>
+							</Entry>
+						</Relationship>
+					</Element>
+				</Entry>
+				<Entry>
+					<Element Type="SqlSimpleColumn" Name="[dbo].[ErrorLog].[ErrorState]">
+						<Relationship Name="TypeSpecifier">
+							<Entry>
+								<Element Type="SqlTypeSpecifier">
+									<Relationship Name="Type">
+										<Entry>
+											<References ExternalSource="BuiltIns" Name="[int]" />
+										</Entry>
+									</Relationship>
+								</Element>
+							</Entry>
+						</Relationship>
+					</Element>
+				</Entry>
+				<Entry>
+					<Element Type="SqlSimpleColumn" Name="[dbo].[ErrorLog].[ErrorProcedure]">
+						<Relationship Name="TypeSpecifier">
+							<Entry>
+								<Element Type="SqlTypeSpecifier">
+									<Property Name="Length" Value="126" />
+									<Relationship Name="Type">
+										<Entry>
+											<References ExternalSource="BuiltIns" Name="[nvarchar]" />
+										</Entry>
+									</Relationship>
+								</Element>
+							</Entry>
+						</Relationship>
+					</Element>
+				</Entry>
+				<Entry>
+					<Element Type="SqlSimpleColumn" Name="[dbo].[ErrorLog].[ErrorLine]">
+						<Relationship Name="TypeSpecifier">
+							<Entry>
+								<Element Type="SqlTypeSpecifier">
+									<Relationship Name="Type">
+										<Entry>
+											<References ExternalSource="BuiltIns" Name="[int]" />
+										</Entry>
+									</Relationship>
+								</Element>
+							</Entry>
+						</Relationship>
+					</Element>
+				</Entry>
+				<Entry>
+					<Element Type="SqlSimpleColumn" Name="[dbo].[ErrorLog].[ErrorMessage]">
+						<Property Name="IsNullable" Value="False" />
+						<Relationship Name="TypeSpecifier">
+							<Entry>
+								<Element Type="SqlTypeSpecifier">
+									<Property Name="Length" Value="4000" />
+									<Relationship Name="Type">
+										<Entry>
+											<References ExternalSource="BuiltIns" Name="[nvarchar]" />
+										</Entry>
+									</Relationship>
+								</Element>
+							</Entry>
+						</Relationship>
+					</Element>
+				</Entry>
+			</Relationship>
+			<Relationship Name="Schema">
+				<Entry>
+					<References ExternalSource="BuiltIns" Name="[dbo]" />
+				</Entry>
+			</Relationship>
+			<Annotation Type="SqlInlineConstraintAnnotation" Disambiguator="6" />
+		</Element>
+		<Element Type="SqlTable" Name="[dbo].[FeedbackDetails]">
+			<Property Name="IsAnsiNullsOn" Value="True" />
+			<Relationship Name="Columns">
+				<Entry>
+					<Element Type="SqlSimpleColumn" Name="[dbo].[FeedbackDetails].[Id]">
+						<Property Name="IsNullable" Value="False" />
+						<Property Name="IsIdentity" Value="True" />
+						<Relationship Name="TypeSpecifier">
+							<Entry>
+								<Element Type="SqlTypeSpecifier">
+									<Relationship Name="Type">
+										<Entry>
+											<References ExternalSource="BuiltIns" Name="[bigint]" />
+										</Entry>
+									</Relationship>
+								</Element>
+							</Entry>
+						</Relationship>
+					</Element>
+				</Entry>
+				<Entry>
+					<Element Type="SqlSimpleColumn" Name="[dbo].[FeedbackDetails].[FeedbackData]">
+						<Property Name="IsNullable" Value="False" />
+						<Relationship Name="TypeSpecifier">
+							<Entry>
+								<Element Type="SqlTypeSpecifier">
+									<Property Name="IsMax" Value="True" />
+									<Relationship Name="Type">
+										<Entry>
+											<References ExternalSource="BuiltIns" Name="[nvarchar]" />
+										</Entry>
+									</Relationship>
+								</Element>
+							</Entry>
+						</Relationship>
+					</Element>
+				</Entry>
+				<Entry>
+					<Element Type="SqlSimpleColumn" Name="[dbo].[FeedbackDetails].[CreatedBy]">
+						<Property Name="IsNullable" Value="False" />
+						<Relationship Name="TypeSpecifier">
+							<Entry>
+								<Element Type="SqlTypeSpecifier">
+									<Relationship Name="Type">
+										<Entry>
+											<References ExternalSource="BuiltIns" Name="[uniqueidentifier]" />
+										</Entry>
+									</Relationship>
+								</Element>
+							</Entry>
+						</Relationship>
+					</Element>
+				</Entry>
+				<Entry>
+					<Element Type="SqlSimpleColumn" Name="[dbo].[FeedbackDetails].[CreatedDate]">
+						<Property Name="IsNullable" Value="False" />
+						<Relationship Name="TypeSpecifier">
+							<Entry>
+								<Element Type="SqlTypeSpecifier">
+									<Relationship Name="Type">
+										<Entry>
+											<References ExternalSource="BuiltIns" Name="[datetime]" />
+										</Entry>
+									</Relationship>
+								</Element>
+							</Entry>
+						</Relationship>
+						<AttachedAnnotation Disambiguator="5" />
+					</Element>
+				</Entry>
+			</Relationship>
+			<Relationship Name="Schema">
+				<Entry>
+					<References ExternalSource="BuiltIns" Name="[dbo]" />
+				</Entry>
+			</Relationship>
+			<Annotation Type="SqlInlineConstraintAnnotation" Disambiguator="7" />
+		</Element>
+		<Element Type="SqlProcedure" Name="[dbo].[GetCredentialDetails]">
+			<Property Name="BodyScript">
+				<Value QuotedIdentifiers="True" AnsiNulls="True"><![CDATA[
+
+BEGIN
+       
+       SET NOCOUNT ON;
+
+       BEGIN TRY
+		   SELECT 
+			   a.Id as UserId,
+			   a.UserId as OracleUserId,
+			   a.EmailAddress as EmailId,
+			   b.RRCareID as RRCareID,
+			   b.RRCarePassword as RRCarePassword,
+			   b.CreatedDate as CreatedDate
+              
+		   FROM 
+       
+		   [RTMS.App].[Admin].[ST_Users] a INNER JOIN [RTMS.App].[Admin].[ST_User_RR_Credential] b on a.Id=b.UserId 
+		   INNER JOIN [RTMS.App].[Admin].[OT_User_RR_Credential_Active] c on b.Id=c.RRCredentialId AND c.RRCredentialActive=1
+		   WHERE c.RRCredentialActive=1            
+
+		   END TRY
+
+		   BEGIN CATCH
+				  EXECUTE [dbo].[LogError]
+	END CATCH
+END]]></Value>
+			</Property>
+			<Property Name="IsAnsiNullsOn" Value="True" />
+			<Relationship Name="BodyDependencies">
+				<Entry />
+				<Entry />
+				<Entry />
+				<Entry />
+				<Entry />
+				<Entry />
+				<Entry />
+				<Entry />
+				<Entry />
+				<Entry />
+				<Entry />
+				<Entry />
+				<Entry />
+				<Entry />
+				<Entry>
+					<References Name="[dbo].[LogError]" />
+				</Entry>
+			</Relationship>
+			<Relationship Name="Schema">
+				<Entry>
+					<References ExternalSource="BuiltIns" Name="[dbo]" />
+				</Entry>
+			</Relationship>
+			<Annotation Type="SysCommentsObjectAnnotation">
+				<Property Name="CreateOffset" Value="200" />
+				<Property Name="Length" Value="935" />
+				<Property Name="StartLine" Value="1" />
+				<Property Name="StartColumn" Value="1" />
+				<Property Name="HeaderContents" Value="&#xD;&#xA;-- =============================================&#xD;&#xA;-- Author:      Vyshna P&#xD;&#xA;-- Create date: 07/02/2018&#xD;&#xA;-- Description: Fetch all user credentials&#xD;&#xA;-- =============================================&#xD;&#xA;CREATE PROCEDURE [dbo].[GetCredentialDetails] &#xD;&#xA;     &#xD;&#xA;AS" />
+			</Annotation>
+		</Element>
+		<Element Type="SqlProcedure" Name="[dbo].[LogError]">
+			<Property Name="BodyScript">
+				<Value QuotedIdentifiers="True" AnsiNulls="True"><![CDATA[                               -- by uspLogError in the ErrorLog table
+BEGIN
+    SET NOCOUNT ON;
+
+    -- Output parameter value of 0 indicates that error 
+    -- information was not logged
+    SET @errorLogID = 0;
+
+    BEGIN TRY
+        -- Return if there is no error information to log
+        IF ERROR_NUMBER() IS NULL
+            RETURN;
+
+        -- Return if inside an uncommittable transaction.
+        -- Data insertion/modification is not allowed when 
+        -- a transaction is in an uncommittable state.
+        IF XACT_STATE() = -1
+        BEGIN
+            PRINT 'Cannot log error since the current transaction is in an uncommittable state. ' 
+                + 'Rollback the transaction before executing uspLogError in order to successfully log error information.';
+            RETURN;
+        END
+
+        INSERT [dbo].[ErrorLog] 
+            (
+            [UserName], 
+            [ErrorNumber], 
+            [ErrorSeverity], 
+            [ErrorState], 
+            [ErrorProcedure], 
+            [ErrorLine], 
+            [ErrorMessage]
+            ) 
+        VALUES 
+            (
+            CONVERT(sysname, CURRENT_USER), 
+            ERROR_NUMBER(),
+            ERROR_SEVERITY(),
+            ERROR_STATE(),
+            ERROR_PROCEDURE(),
+            ERROR_LINE(),
+            ERROR_MESSAGE()
+            );
+
+        -- Pass back the ErrorLogID of the row inserted
+        SET @errorLogID = @@IDENTITY;
+    END TRY
+    BEGIN CATCH
+        PRINT 'An error occurred in stored procedure uspLogError: ';
+        EXECUTE [dbo].[PrintError];
+        RETURN -1;
+    END CATCH
+END;]]></Value>
+			</Property>
+			<Property Name="IsAnsiNullsOn" Value="True" />
+			<Relationship Name="BodyDependencies">
+				<Entry>
+					<References Name="[dbo].[LogError].[@errorLogID]" />
+				</Entry>
+				<Entry>
+					<References Name="[dbo].[ErrorLog]" />
+				</Entry>
+				<Entry>
+					<References Name="[dbo].[ErrorLog].[UserName]" />
+				</Entry>
+				<Entry>
+					<References Name="[dbo].[ErrorLog].[ErrorNumber]" />
+				</Entry>
+				<Entry>
+					<References Name="[dbo].[ErrorLog].[ErrorSeverity]" />
+				</Entry>
+				<Entry>
+					<References Name="[dbo].[ErrorLog].[ErrorState]" />
+				</Entry>
+				<Entry>
+					<References Name="[dbo].[ErrorLog].[ErrorProcedure]" />
+				</Entry>
+				<Entry>
+					<References Name="[dbo].[ErrorLog].[ErrorLine]" />
+				</Entry>
+				<Entry>
+					<References Name="[dbo].[ErrorLog].[ErrorMessage]" />
+				</Entry>
+				<Entry>
+					<References ExternalSource="BuiltIns" Name="[sys].[sysname]" />
+				</Entry>
+				<Entry>
+					<References Name="[dbo].[PrintError]" />
+				</Entry>
+			</Relationship>
+			<Relationship Name="Parameters">
+				<Entry>
+					<Element Type="SqlSubroutineParameter" Name="[dbo].[LogError].[@errorLogID]">
+						<Property Name="IsOutput" Value="True" />
+						<Property Name="DefaultExpressionScript">
+							<Value QuotedIdentifiers="True" AnsiNulls="True"><![CDATA[0]]></Value>
+						</Property>
+						<Relationship Name="Type">
+							<Entry>
+								<Element Type="SqlTypeSpecifier">
+									<Relationship Name="Type">
+										<Entry>
+											<References ExternalSource="BuiltIns" Name="[int]" />
+										</Entry>
+									</Relationship>
+								</Element>
+							</Entry>
+						</Relationship>
+					</Element>
+				</Entry>
+			</Relationship>
+			<Relationship Name="Schema">
+				<Entry>
+					<References ExternalSource="BuiltIns" Name="[dbo]" />
+				</Entry>
+			</Relationship>
+			<Annotation Type="SysCommentsObjectAnnotation">
+				<Property Name="CreateOffset" Value="302" />
+				<Property Name="Length" Value="2067" />
+				<Property Name="StartLine" Value="1" />
+				<Property Name="StartColumn" Value="1" />
+				<Property Name="HeaderContents" Value="&#xD;&#xA;-- uspLogError logs error information in the ErrorLog table about the &#xD;&#xA;-- error that caused execution to jump to the CATCH block of a &#xD;&#xA;-- TRY...CATCH construct. This should be executed from within the scope &#xD;&#xA;-- of a CATCH block otherwise it will return without inserting error &#xD;&#xA;-- information. &#xD;&#xA;CREATE PROCEDURE [dbo].[LogError] &#xD;&#xA;    @errorLogID [int] = 0 OUTPUT -- contains the ErrorLogID of the row inserted&#xD;&#xA;AS" />
+			</Annotation>
+		</Element>
+		<Element Type="SqlPrimaryKeyConstraint" Name="[dbo].[PK_AWBuildVersion_SystemInformationID]">
+			<Relationship Name="ColumnSpecifications">
+				<Entry>
+					<Element Type="SqlIndexedColumnSpecification">
+						<Relationship Name="Column">
+							<Entry>
+								<References Name="[dbo].[RTMSBuildVersion].[SystemInformationID]" />
+							</Entry>
+						</Relationship>
+					</Element>
+				</Entry>
+			</Relationship>
+			<Relationship Name="DefiningTable">
+				<Entry>
+					<References Name="[dbo].[RTMSBuildVersion]" />
+				</Entry>
+			</Relationship>
+			<Annotation Type="SqlInlineConstraintAnnotation" Disambiguator="8" />
+		</Element>
+		<Element Type="SqlPrimaryKeyConstraint" Name="[dbo].[PK_DatabaseLog_DatabaseLogID]">
+			<Property Name="IsClustered" Value="False" />
+			<Relationship Name="ColumnSpecifications">
+				<Entry>
+					<Element Type="SqlIndexedColumnSpecification">
+						<Relationship Name="Column">
+							<Entry>
+								<References Name="[dbo].[DatabaseLog].[DatabaseLogID]" />
+							</Entry>
+						</Relationship>
+					</Element>
+				</Entry>
+			</Relationship>
+			<Relationship Name="DefiningTable">
+				<Entry>
+					<References Name="[dbo].[DatabaseLog]" />
+				</Entry>
+			</Relationship>
+			<AttachedAnnotation Disambiguator="3" />
+		</Element>
+		<Element Type="SqlPrimaryKeyConstraint" Name="[dbo].[PK_ErrorLog_ErrorLogID]">
+			<Relationship Name="ColumnSpecifications">
+				<Entry>
+					<Element Type="SqlIndexedColumnSpecification">
+						<Relationship Name="Column">
+							<Entry>
+								<References Name="[dbo].[ErrorLog].[ErrorLogID]" />
+							</Entry>
+						</Relationship>
+					</Element>
+				</Entry>
+			</Relationship>
+			<Relationship Name="DefiningTable">
+				<Entry>
+					<References Name="[dbo].[ErrorLog]" />
+				</Entry>
+			</Relationship>
+			<AttachedAnnotation Disambiguator="6" />
+		</Element>
+		<Element Type="SqlPrimaryKeyConstraint" Name="[dbo].[PK_FeedbackDetails]">
+			<Relationship Name="ColumnSpecifications">
+				<Entry>
+					<Element Type="SqlIndexedColumnSpecification">
+						<Relationship Name="Column">
+							<Entry>
+								<References Name="[dbo].[FeedbackDetails].[Id]" />
+							</Entry>
+						</Relationship>
+					</Element>
+				</Entry>
+			</Relationship>
+			<Relationship Name="DefiningTable">
+				<Entry>
+					<References Name="[dbo].[FeedbackDetails]" />
+				</Entry>
+			</Relationship>
+			<AttachedAnnotation Disambiguator="7" />
+		</Element>
+		<Element Type="SqlProcedure" Name="[dbo].[PrintError]">
+			<Property Name="BodyScript">
+				<Value QuotedIdentifiers="True" AnsiNulls="True"><![CDATA[
+BEGIN
+    SET NOCOUNT ON;
+
+    -- Print error information. 
+    PRINT 'Error ' + CONVERT(varchar(50), ERROR_NUMBER()) +
+          ', Severity ' + CONVERT(varchar(5), ERROR_SEVERITY()) +
+          ', State ' + CONVERT(varchar(5), ERROR_STATE()) + 
+          ', Procedure ' + ISNULL(ERROR_PROCEDURE(), '-') + 
+          ', Line ' + CONVERT(varchar(5), ERROR_LINE());
+    PRINT ERROR_MESSAGE();
+END;]]></Value>
+			</Property>
+			<Property Name="IsAnsiNullsOn" Value="True" />
+			<Relationship Name="BodyDependencies">
+				<Entry>
+					<References ExternalSource="BuiltIns" Name="[varchar]" />
+				</Entry>
+				<Entry>
+					<References ExternalSource="BuiltIns" Name="[varchar]" />
+				</Entry>
+				<Entry>
+					<References ExternalSource="BuiltIns" Name="[varchar]" />
+				</Entry>
+				<Entry>
+					<References ExternalSource="BuiltIns" Name="[varchar]" />
+				</Entry>
+			</Relationship>
+			<Relationship Name="Schema">
+				<Entry>
+					<References ExternalSource="BuiltIns" Name="[dbo]" />
+				</Entry>
+			</Relationship>
+			<Annotation Type="SysCommentsObjectAnnotation">
+				<Property Name="CreateOffset" Value="276" />
+				<Property Name="Length" Value="724" />
+				<Property Name="StartLine" Value="1" />
+				<Property Name="StartColumn" Value="1" />
+				<Property Name="HeaderContents" Value="&#xD;&#xA;-- uspPrintError prints error information about the error that caused &#xD;&#xA;-- execution to jump to the CATCH block of a TRY...CATCH construct. &#xD;&#xA;-- Should be executed from within the scope of a CATCH block otherwise &#xD;&#xA;-- it will return without printing any error information.&#xD;&#xA;CREATE PROCEDURE [dbo].[PrintError] &#xD;&#xA;AS" />
+			</Annotation>
+		</Element>
+		<Element Type="SqlTable" Name="[dbo].[RTMSBuildVersion]">
+			<Property Name="IsAnsiNullsOn" Value="True" />
+			<Relationship Name="Columns">
+				<Entry>
+					<Element Type="SqlSimpleColumn" Name="[dbo].[RTMSBuildVersion].[SystemInformationID]">
+						<Property Name="IsNullable" Value="False" />
+						<Property Name="IsIdentity" Value="True" />
+						<Relationship Name="TypeSpecifier">
+							<Entry>
+								<Element Type="SqlTypeSpecifier">
+									<Relationship Name="Type">
+										<Entry>
+											<References ExternalSource="BuiltIns" Name="[tinyint]" />
+										</Entry>
+									</Relationship>
+								</Element>
+							</Entry>
+						</Relationship>
+					</Element>
+				</Entry>
+				<Entry>
+					<Element Type="SqlSimpleColumn" Name="[dbo].[RTMSBuildVersion].[Database Version]">
+						<Property Name="IsNullable" Value="False" />
+						<Relationship Name="TypeSpecifier">
+							<Entry>
+								<Element Type="SqlTypeSpecifier">
+									<Property Name="Length" Value="25" />
+									<Relationship Name="Type">
+										<Entry>
+											<References ExternalSource="BuiltIns" Name="[nvarchar]" />
+										</Entry>
+									</Relationship>
+								</Element>
+							</Entry>
+						</Relationship>
+					</Element>
+				</Entry>
+				<Entry>
+					<Element Type="SqlSimpleColumn" Name="[dbo].[RTMSBuildVersion].[VersionDate]">
+						<Property Name="IsNullable" Value="False" />
+						<Relationship Name="TypeSpecifier">
+							<Entry>
+								<Element Type="SqlTypeSpecifier">
+									<Relationship Name="Type">
+										<Entry>
+											<References ExternalSource="BuiltIns" Name="[datetime]" />
+										</Entry>
+									</Relationship>
+								</Element>
+							</Entry>
+						</Relationship>
+					</Element>
+				</Entry>
+				<Entry>
+					<Element Type="SqlSimpleColumn" Name="[dbo].[RTMSBuildVersion].[ModifiedDate]">
+						<Relationship Name="TypeSpecifier">
+							<Entry>
+								<Element Type="SqlTypeSpecifier">
+									<Relationship Name="Type">
+										<Entry>
+											<References ExternalSource="BuiltIns" Name="[datetime]" />
+										</Entry>
+									</Relationship>
+								</Element>
+							</Entry>
+						</Relationship>
+					</Element>
+				</Entry>
+			</Relationship>
+			<Relationship Name="Schema">
+				<Entry>
+					<References ExternalSource="BuiltIns" Name="[dbo]" />
+				</Entry>
+			</Relationship>
+			<AttachedAnnotation Disambiguator="8" />
+		</Element>
+		<Element Type="SqlSchema" Name="[SyncTM]">
+			<Relationship Name="Authorizer">
+				<Entry>
+					<References ExternalSource="BuiltIns" Name="[dbo]" />
+				</Entry>
+			</Relationship>
+		</Element>
+		<Element Type="SqlProcedure" Name="[SyncTM].[GetCountOfSyncDetails]">
+			<Property Name="BodyScript">
+				<Value QuotedIdentifiers="True" AnsiNulls="True"><![CDATA[
+BEGIN TRY
+	-- SET NOCOUNT ON added to prevent extra result sets from
+	-- interfering with SELECT statements.
+	SET NOCOUNT ON;
+    -- Insert statements for procedure here
+	DECLARE @syncStatusCountofES int ,@syncStatusCountofEM int, @syncStatusCountofEP int, @syncStatusCountofTaskNode int,
+			@totalSyncStatusCount int, @syncDateCountofES int ,@syncDateofEM int, @syncDateofEP int, @syncDateofTaskNode int,
+			@totalSyncDateCount int
+
+	  BEGIN	
+	  
+		  SET @syncDateCountofES = (SELECT COUNT(SyncDate) FROM [TManual].ST_Engine_Series_Type  WHERE CAST(SyncDate AS date) = CAST(GETDATE() AS date));
+		  SET @syncDateofEM = (SELECT COUNT(SyncDate) FROM [TManual].ST_Engine_Mark_Type  WHERE CAST(SyncDate AS date) = CAST(GETDATE() AS date));
+		  SET @syncDateofEP = (SELECT COUNT(SyncDate) FROM [TManual].ST_Engine_Publication_Details  WHERE CAST(SyncDate AS date) = CAST(GETDATE() AS date));
+		  SET @syncDateofTaskNode = (SELECT COUNT(SyncDate) FROM [TManual].ST_Publication_Node_Details  WHERE CAST(SyncDate AS date) = CAST(GETDATE() AS date));
+		  SET @totalSyncDateCount = (@syncDateCountofES + @syncDateofEM + @syncDateofEP + @syncDateofTaskNode)
+		   
+		  SET @syncStatusCountofES = (SELECT COUNT(SyncStatus) FROM [TManual].ST_Engine_Series_Type  WHERE UPPER(SyncStatus) = 'NOTSTARTED');
+		  SET @syncStatusCountofEM = (SELECT COUNT(SyncStatus) FROM [TManual].ST_Engine_Mark_Type  WHERE UPPER(SyncStatus) = 'NOTSTARTED');
+		  SET @syncStatusCountofEP = (SELECT COUNT(SyncStatus) FROM [TManual].ST_Engine_Publication_Details  WHERE UPPER(SyncStatus) = 'NOTSTARTED');
+		  SET @syncStatusCountofTaskNode = (SELECT COUNT(SyncStatus) FROM [TManual].ST_Publication_Node_Details  WHERE UPPER(SyncStatus) = 'NOTSTARTED');
+		  SET @totalSyncStatusCount = (@syncStatusCountofES + @syncStatusCountofEM + @syncStatusCountofEP + @syncStatusCountofTaskNode)
+
+		  SELECT @totalSyncDateCount AS TotalSyncDate, @totalSyncStatusCount AS TotalNotStartedSyncStatus;
+
+	  END
+
+END TRY
+
+BEGIN CATCH
+   EXECUTE [dbo].[LogError]
+END CATCH]]></Value>
+			</Property>
+			<Property Name="IsAnsiNullsOn" Value="True" />
+			<Relationship Name="BodyDependencies">
+				<Entry>
+					<References ExternalSource="BuiltIns" Name="[int]" />
+				</Entry>
+				<Entry>
+					<References ExternalSource="BuiltIns" Name="[int]" />
+				</Entry>
+				<Entry>
+					<References ExternalSource="BuiltIns" Name="[int]" />
+				</Entry>
+				<Entry>
+					<References ExternalSource="BuiltIns" Name="[int]" />
+				</Entry>
+				<Entry>
+					<References ExternalSource="BuiltIns" Name="[int]" />
+				</Entry>
+				<Entry>
+					<References ExternalSource="BuiltIns" Name="[int]" />
+				</Entry>
+				<Entry>
+					<References ExternalSource="BuiltIns" Name="[int]" />
+				</Entry>
+				<Entry>
+					<References ExternalSource="BuiltIns" Name="[int]" />
+				</Entry>
+				<Entry>
+					<References ExternalSource="BuiltIns" Name="[int]" />
+				</Entry>
+				<Entry>
+					<References ExternalSource="BuiltIns" Name="[int]" />
+				</Entry>
+				<Entry>
+					<References Name="[TManual].[ST_Engine_Series_Type]" />
+				</Entry>
+				<Entry>
+					<References Name="[TManual].[ST_Engine_Series_Type].[SyncDate]" />
+				</Entry>
+				<Entry>
+					<References ExternalSource="BuiltIns" Name="[date]" />
+				</Entry>
+				<Entry>
+					<References ExternalSource="BuiltIns" Name="[date]" />
+				</Entry>
+				<Entry>
+					<References Name="[TManual].[ST_Engine_Mark_Type]" />
+				</Entry>
+				<Entry>
+					<References Name="[TManual].[ST_Engine_Mark_Type].[SyncDate]" />
+				</Entry>
+				<Entry>
+					<References ExternalSource="BuiltIns" Name="[date]" />
+				</Entry>
+				<Entry>
+					<References ExternalSource="BuiltIns" Name="[date]" />
+				</Entry>
+				<Entry>
+					<References Name="[TManual].[ST_Engine_Publication_Details]" />
+				</Entry>
+				<Entry>
+					<References Name="[TManual].[ST_Engine_Publication_Details].[SyncDate]" />
+				</Entry>
+				<Entry>
+					<References ExternalSource="BuiltIns" Name="[date]" />
+				</Entry>
+				<Entry>
+					<References ExternalSource="BuiltIns" Name="[date]" />
+				</Entry>
+				<Entry>
+					<References Name="[TManual].[ST_Publication_Node_Details]" />
+				</Entry>
+				<Entry>
+					<References Name="[TManual].[ST_Publication_Node_Details].[SyncDate]" />
+				</Entry>
+				<Entry>
+					<References ExternalSource="BuiltIns" Name="[date]" />
+				</Entry>
+				<Entry>
+					<References ExternalSource="BuiltIns" Name="[date]" />
+				</Entry>
+				<Entry>
+					<References Name="[TManual].[ST_Engine_Series_Type].[SyncStatus]" />
+				</Entry>
+				<Entry>
+					<References Name="[TManual].[ST_Engine_Mark_Type].[SyncStatus]" />
+				</Entry>
+				<Entry>
+					<References Name="[TManual].[ST_Engine_Publication_Details].[SyncStatus]" />
+				</Entry>
+				<Entry>
+					<References Name="[TManual].[ST_Publication_Node_Details].[SyncStatus]" />
+				</Entry>
+				<Entry>
+					<References Name="[dbo].[LogError]" />
+				</Entry>
+			</Relationship>
+			<Relationship Name="Schema">
+				<Entry>
+					<References Name="[SyncTM]" />
+				</Entry>
+			</Relationship>
+			<Annotation Type="SysCommentsObjectAnnotation">
+				<Property Name="CreateOffset" Value="279" />
+				<Property Name="Length" Value="2434" />
+				<Property Name="StartLine" Value="1" />
+				<Property Name="StartColumn" Value="1" />
+				<Property Name="HeaderContents" Value="&#xD;&#xA;-- =============================================&#xD;&#xA;-- Author:&#x9;&#x9;Vyshna&#xD;&#xA;-- Create date: 2/15/2018&#xD;&#xA;-- Description:&#x9;Get the count of Not started&#xD;&#xA;-- sync status and current sync date&#xD;&#xA;-- exec [SyncTM].[GetCountOfSyncInformation]&#xD;&#xA;-- =============================================&#xD;&#xA;CREATE PROCEDURE [SyncTM].[GetCountOfSyncDetails]&#xD;&#xA;&#x9;-- Add the parameters for the stored procedure here&#xD;&#xA;AS" />
+			</Annotation>
+		</Element>
+		<Element Type="SqlProcedure" Name="[SyncTM].[GetEngineMarkDetails]">
+			<Property Name="BodyScript">
+				<Value QuotedIdentifiers="True" AnsiNulls="True"><![CDATA[
+
+BEGIN TRY
+	-- SET NOCOUNT ON added to prevent extra result sets from
+	-- interfering with SELECT statements.
+	SET NOCOUNT ON;
+    -- Insert statements for procedure here
+
+	SELECT 
+			em.Id as EngineMarkId,
+			et.Id as EngineTypeId,
+			em.EngineSeriesTypeId as EngineSeriesTypeId,			
+			em.EngineMarkName as EngineMarkName,
+			et.EngineName as EngineTypeName,
+			es.EngineSeriesName as EngineSeriesName,				
+			es.EngineMarkPageTitle as EngineMarkPageTitle,
+			em.EPublicationTitleName as EPublicationTitleName,
+			em.EngineMarkDescription as EngineMarkDescription,
+			em.Active    as Active 
+
+	FROM	[TManual].[ST_Engine_Mark_Type] em
+		INNER JOIN 	[TManual].[ST_Engine_Series_Type] es ON  es.Id =em.EngineSeriesTypeId
+		INNER JOIN 	[TManual].[ST_Engine_Type] et ON  et.Id =es.EngineTypeId
+
+	WHERE
+			em.EngineSeriesTypeId=(ISNULL(@engineSeriesId, em.EngineSeriesTypeId))
+		AND UPPER(ISNULL(es.SyncStatus,'NotStarted'))='NotStarted'
+		AND em.Active=1 AND es.Active=1 AND et.Active =1
+
+	ORDER BY es.EngineTypeId,em.EngineSeriesTypeId,es.SequenceOrder, em.SequenceOrder
+
+END TRY
+
+BEGIN CATCH
+   EXECUTE [dbo].[LogError]
+END CATCH]]></Value>
+			</Property>
+			<Property Name="IsAnsiNullsOn" Value="True" />
+			<Relationship Name="BodyDependencies">
+				<Entry>
+					<References Name="[TManual].[ST_Engine_Mark_Type]" />
+				</Entry>
+				<Entry>
+					<References Name="[TManual].[ST_Engine_Series_Type]" />
+				</Entry>
+				<Entry>
+					<References Name="[TManual].[ST_Engine_Series_Type].[Id]" />
+				</Entry>
+				<Entry>
+					<References Name="[TManual].[ST_Engine_Mark_Type].[EngineSeriesTypeId]" />
+				</Entry>
+				<Entry>
+					<References Name="[TManual].[ST_Engine_Type]" />
+				</Entry>
+				<Entry>
+					<References Name="[TManual].[ST_Engine_Type].[Id]" />
+				</Entry>
+				<Entry>
+					<References Name="[TManual].[ST_Engine_Series_Type].[EngineTypeId]" />
+				</Entry>
+				<Entry>
+					<References Name="[TManual].[ST_Engine_Mark_Type].[Id]" />
+				</Entry>
+				<Entry>
+					<References Name="[TManual].[ST_Engine_Type].[Id]" />
+				</Entry>
+				<Entry>
+					<References Name="[TManual].[ST_Engine_Mark_Type].[EngineSeriesTypeId]" />
+				</Entry>
+				<Entry>
+					<References Name="[TManual].[ST_Engine_Mark_Type].[EngineMarkName]" />
+				</Entry>
+				<Entry>
+					<References Name="[TManual].[ST_Engine_Type].[EngineName]" />
+				</Entry>
+				<Entry>
+					<References Name="[TManual].[ST_Engine_Series_Type].[EngineSeriesName]" />
+				</Entry>
+				<Entry>
+					<References Name="[TManual].[ST_Engine_Series_Type].[EngineMarkPageTitle]" />
+				</Entry>
+				<Entry>
+					<References Name="[TManual].[ST_Engine_Mark_Type].[EPublicationTitleName]" />
+				</Entry>
+				<Entry>
+					<References Name="[TManual].[ST_Engine_Mark_Type].[EngineMarkDescription]" />
+				</Entry>
+				<Entry>
+					<References Name="[TManual].[ST_Engine_Mark_Type].[Active]" />
+				</Entry>
+				<Entry>
+					<References Name="[TManual].[ST_Engine_Mark_Type].[EngineSeriesTypeId]" />
+				</Entry>
+				<Entry>
+					<References Name="[SyncTM].[GetEngineMarkDetails].[@engineSeriesId]" />
+				</Entry>
+				<Entry>
+					<References Name="[TManual].[ST_Engine_Series_Type].[SyncStatus]" />
+				</Entry>
+				<Entry>
+					<References Name="[TManual].[ST_Engine_Mark_Type].[Active]" />
+				</Entry>
+				<Entry>
+					<References Name="[TManual].[ST_Engine_Series_Type].[Active]" />
+				</Entry>
+				<Entry>
+					<References Name="[TManual].[ST_Engine_Type].[Active]" />
+				</Entry>
+				<Entry>
+					<References Name="[TManual].[ST_Engine_Series_Type].[SequenceOrder]" />
+				</Entry>
+				<Entry>
+					<References Name="[TManual].[ST_Engine_Mark_Type].[SequenceOrder]" />
+				</Entry>
+				<Entry>
+					<References Name="[dbo].[LogError]" />
+				</Entry>
+			</Relationship>
+			<Relationship Name="Parameters">
+				<Entry>
+					<Element Type="SqlSubroutineParameter" Name="[SyncTM].[GetEngineMarkDetails].[@engineSeriesId]">
+						<Relationship Name="Type">
+							<Entry>
+								<Element Type="SqlTypeSpecifier">
+									<Relationship Name="Type">
+										<Entry>
+											<References ExternalSource="BuiltIns" Name="[bigint]" />
+										</Entry>
+									</Relationship>
+								</Element>
+							</Entry>
+						</Relationship>
+					</Element>
+				</Entry>
+			</Relationship>
+			<Relationship Name="Schema">
+				<Entry>
+					<References Name="[SyncTM]" />
+				</Entry>
+			</Relationship>
+			<Annotation Type="SysCommentsObjectAnnotation">
+				<Property Name="CreateOffset" Value="238" />
+				<Property Name="Length" Value="1533" />
+				<Property Name="StartLine" Value="1" />
+				<Property Name="StartColumn" Value="1" />
+				<Property Name="HeaderContents" Value="&#xD;&#xA;-- =============================================&#xD;&#xA;-- Author:&#x9;&#x9;JohnRaj&#xD;&#xA;-- Create date: 1/12/2018&#xD;&#xA;-- Description:&#x9;Get All Node Publication&#xD;&#xA;-- exec [SyncTM].[GetEngineMarkDetails] NULL&#xD;&#xA;-- =============================================&#xD;&#xA;CREATE PROCEDURE [SyncTM].[GetEngineMarkDetails] &#xD;&#xA;&#x9;-- Add the parameters for the stored procedure here&#xD;&#xA;&#x9;@engineSeriesId bigint&#xD;&#xA;AS" />
+			</Annotation>
+		</Element>
+		<Element Type="SqlProcedure" Name="[SyncTM].[GetEnginePublicationDetails]">
+			<Property Name="BodyScript">
+				<Value QuotedIdentifiers="True" AnsiNulls="True"><![CDATA[
+
+BEGIN TRY
+	-- SET NOCOUNT ON added to prevent extra result sets from
+	-- interfering with SELECT statements.
+	SET NOCOUNT ON;
+    -- Insert statements for procedure here
+
+	SELECT  
+				ep.Id as EnginePublicationId,
+				ep.EngineTypeId as EngineTypeId,
+				ep.EngineSeriesId as EngineSeriesId,
+		        ep.EngineMarkId as EngineMarkId,
+				et.EngineName as EngineTypeName,
+				es.EngineSeriesName as EngineSeriesName,
+				em.EngineMarkName as EngineMarkName,				
+				es.EngineMarkPageTitle as EngineMarkPageTitle,
+				ep.EnginePublicationShotName as EnginePublicationShotName, 
+			    ep.EnginePublicationLongName as EnginePublicationLongName,
+			    ep.EnginePublicationDescription as EnginePublicationDescription,
+				em.EPublicationTitleName as EnginePublicationTitle,
+			    ep.IssueDate as IssueDate, 
+			    ep.SyncDate as SyncDate, 
+			    ep.SyncStatus as SyncStatus, 
+			    ep.Active as Active, 
+			    ep.CreatedDate as CreatedDate, 
+			    ep.ModifiedDate as ModifiedDate
+			
+	FROM		[TManual].[ST_Engine_Publication_Details] ep	
+			INNER JOIN [TManual].ST_Engine_Mark_Type em ON em.Id = ep.EngineMarkId
+			INNER JOIN [TManual].ST_Engine_Series_Type es ON es.Id = em.EngineSeriesTypeId
+			INNER JOIN [TManual].ST_Engine_Type et ON et.Id = es.EngineTypeId
+	WHERE 		
+				(ep.EngineTypeId=(ISNULL(@engineTypeId, ep.EngineTypeId)) 
+			AND ep.EngineSeriesId=(ISNULL(@engineSeriesId, ep.EngineSeriesId))
+			AND ep.EngineMarkId=(ISNULL(@engineMarkId, ep.EngineMarkId)))	
+			AND UPPER(ISNULL(es.SyncStatus,'NotStarted'))='NotStarted'
+			AND ep.Active=1 AND em.Active=1 AND es.Active=1 AND et.Active=1
+	ORDER BY	ep.EngineTypeId,ep.EngineSeriesId,ep.EngineMarkId,ep.SequenceOrder
+
+END TRY
+
+BEGIN CATCH
+   EXECUTE [dbo].[LogError]
+END CATCH]]></Value>
+			</Property>
+			<Property Name="IsAnsiNullsOn" Value="True" />
+			<Relationship Name="BodyDependencies">
+				<Entry>
+					<References Name="[TManual].[ST_Engine_Publication_Details]" />
+				</Entry>
+				<Entry>
+					<References Name="[TManual].[ST_Engine_Mark_Type]" />
+				</Entry>
+				<Entry>
+					<References Name="[TManual].[ST_Engine_Mark_Type].[Id]" />
+				</Entry>
+				<Entry>
+					<References Name="[TManual].[ST_Engine_Publication_Details].[EngineMarkId]" />
+				</Entry>
+				<Entry>
+					<References Name="[TManual].[ST_Engine_Series_Type]" />
+				</Entry>
+				<Entry>
+					<References Name="[TManual].[ST_Engine_Series_Type].[Id]" />
+				</Entry>
+				<Entry>
+					<References Name="[TManual].[ST_Engine_Mark_Type].[EngineSeriesTypeId]" />
+				</Entry>
+				<Entry>
+					<References Name="[TManual].[ST_Engine_Type]" />
+				</Entry>
+				<Entry>
+					<References Name="[TManual].[ST_Engine_Type].[Id]" />
+				</Entry>
+				<Entry>
+					<References Name="[TManual].[ST_Engine_Series_Type].[EngineTypeId]" />
+				</Entry>
+				<Entry>
+					<References Name="[TManual].[ST_Engine_Publication_Details].[Id]" />
+				</Entry>
+				<Entry>
+					<References Name="[TManual].[ST_Engine_Publication_Details].[EngineTypeId]" />
+				</Entry>
+				<Entry>
+					<References Name="[TManual].[ST_Engine_Publication_Details].[EngineSeriesId]" />
+				</Entry>
+				<Entry>
+					<References Name="[TManual].[ST_Engine_Publication_Details].[EngineMarkId]" />
+				</Entry>
+				<Entry>
+					<References Name="[TManual].[ST_Engine_Type].[EngineName]" />
+				</Entry>
+				<Entry>
+					<References Name="[TManual].[ST_Engine_Series_Type].[EngineSeriesName]" />
+				</Entry>
+				<Entry>
+					<References Name="[TManual].[ST_Engine_Mark_Type].[EngineMarkName]" />
+				</Entry>
+				<Entry>
+					<References Name="[TManual].[ST_Engine_Series_Type].[EngineMarkPageTitle]" />
+				</Entry>
+				<Entry>
+					<References Name="[TManual].[ST_Engine_Publication_Details].[EnginePublicationShotName]" />
+				</Entry>
+				<Entry>
+					<References Name="[TManual].[ST_Engine_Publication_Details].[EnginePublicationLongName]" />
+				</Entry>
+				<Entry>
+					<References Name="[TManual].[ST_Engine_Publication_Details].[EnginePublicationDescription]" />
+				</Entry>
+				<Entry>
+					<References Name="[TManual].[ST_Engine_Mark_Type].[EPublicationTitleName]" />
+				</Entry>
+				<Entry>
+					<References Name="[TManual].[ST_Engine_Publication_Details].[IssueDate]" />
+				</Entry>
+				<Entry>
+					<References Name="[TManual].[ST_Engine_Publication_Details].[SyncDate]" />
+				</Entry>
+				<Entry>
+					<References Name="[TManual].[ST_Engine_Publication_Details].[SyncStatus]" />
+				</Entry>
+				<Entry>
+					<References Name="[TManual].[ST_Engine_Publication_Details].[Active]" />
+				</Entry>
+				<Entry>
+					<References Name="[TManual].[ST_Engine_Publication_Details].[CreatedDate]" />
+				</Entry>
+				<Entry>
+					<References Name="[TManual].[ST_Engine_Publication_Details].[ModifiedDate]" />
+				</Entry>
+				<Entry>
+					<References Name="[TManual].[ST_Engine_Publication_Details].[EngineTypeId]" />
+				</Entry>
+				<Entry>
+					<References Name="[SyncTM].[GetEnginePublicationDetails].[@engineTypeId]" />
+				</Entry>
+				<Entry>
+					<References Name="[TManual].[ST_Engine_Publication_Details].[EngineSeriesId]" />
+				</Entry>
+				<Entry>
+					<References Name="[SyncTM].[GetEnginePublicationDetails].[@engineSeriesId]" />
+				</Entry>
+				<Entry>
+					<References Name="[TManual].[ST_Engine_Publication_Details].[EngineMarkId]" />
+				</Entry>
+				<Entry>
+					<References Name="[SyncTM].[GetEnginePublicationDetails].[@engineMarkId]" />
+				</Entry>
+				<Entry>
+					<References Name="[TManual].[ST_Engine_Series_Type].[SyncStatus]" />
+				</Entry>
+				<Entry>
+					<References Name="[TManual].[ST_Engine_Publication_Details].[Active]" />
+				</Entry>
+				<Entry>
+					<References Name="[TManual].[ST_Engine_Mark_Type].[Active]" />
+				</Entry>
+				<Entry>
+					<References Name="[TManual].[ST_Engine_Series_Type].[Active]" />
+				</Entry>
+				<Entry>
+					<References Name="[TManual].[ST_Engine_Type].[Active]" />
+				</Entry>
+				<Entry>
+					<References Name="[TManual].[ST_Engine_Publication_Details].[SequenceOrder]" />
+				</Entry>
+				<Entry>
+					<References Name="[dbo].[LogError]" />
+				</Entry>
+			</Relationship>
+			<Relationship Name="Parameters">
+				<Entry>
+					<Element Type="SqlSubroutineParameter" Name="[SyncTM].[GetEnginePublicationDetails].[@engineTypeId]">
+						<Relationship Name="Type">
+							<Entry>
+								<Element Type="SqlTypeSpecifier">
+									<Relationship Name="Type">
+										<Entry>
+											<References ExternalSource="BuiltIns" Name="[int]" />
+										</Entry>
+									</Relationship>
+								</Element>
+							</Entry>
+						</Relationship>
+					</Element>
+				</Entry>
+				<Entry>
+					<Element Type="SqlSubroutineParameter" Name="[SyncTM].[GetEnginePublicationDetails].[@engineSeriesId]">
+						<Relationship Name="Type">
+							<Entry>
+								<Element Type="SqlTypeSpecifier">
+									<Relationship Name="Type">
+										<Entry>
+											<References ExternalSource="BuiltIns" Name="[bigint]" />
+										</Entry>
+									</Relationship>
+								</Element>
+							</Entry>
+						</Relationship>
+					</Element>
+				</Entry>
+				<Entry>
+					<Element Type="SqlSubroutineParameter" Name="[SyncTM].[GetEnginePublicationDetails].[@engineMarkId]">
+						<Relationship Name="Type">
+							<Entry>
+								<Element Type="SqlTypeSpecifier">
+									<Relationship Name="Type">
+										<Entry>
+											<References ExternalSource="BuiltIns" Name="[bigint]" />
+										</Entry>
+									</Relationship>
+								</Element>
+							</Entry>
+						</Relationship>
+					</Element>
+				</Entry>
+			</Relationship>
+			<Relationship Name="Schema">
+				<Entry>
+					<References Name="[SyncTM]" />
+				</Entry>
+			</Relationship>
+			<Annotation Type="SysCommentsObjectAnnotation">
+				<Property Name="CreateOffset" Value="264" />
+				<Property Name="Length" Value="2236" />
+				<Property Name="StartLine" Value="1" />
+				<Property Name="StartColumn" Value="1" />
+				<Property Name="HeaderContents" Value="&#xD;&#xA;-- =============================================&#xD;&#xA;-- Author:&#x9;&#x9;Vyshna&#xD;&#xA;-- Create date: 1/30/2018&#xD;&#xA;-- Description:&#x9;Get All Engine Publication Details&#xD;&#xA;-- exec [SyncTM].[GetEnginePublicationDetails] null,null,null&#xD;&#xA;-- =============================================&#xD;&#xA;CREATE PROCEDURE [SyncTM].[GetEnginePublicationDetails] &#xD;&#xA;&#x9;-- Add the parameters for the stored procedure here&#xD;&#xA;&#x9;@engineTypeId int,&#xD;&#xA;&#x9;@engineSeriesId bigint,&#xD;&#xA;&#x9;@engineMarkId bigint&#xD;&#xA;&#xD;&#xA;AS" />
+			</Annotation>
+		</Element>
+		<Element Type="SqlProcedure" Name="[SyncTM].[GetEngineSeriesDetails]">
+			<Property Name="BodyScript">
+				<Value QuotedIdentifiers="True" AnsiNulls="True"><![CDATA[
+
+BEGIN TRY
+	-- SET NOCOUNT ON added to prevent extra result sets from
+	-- interfering with SELECT statements.
+	SET NOCOUNT ON;
+    -- Insert statements for procedure here
+
+	     SELECT 
+                es.Id as EngineSeriesId,
+                es.EngineTypeId as EngineTypeId,
+                et.EngineName as EngineName,
+                es.EngineSeriesName as EngineSeriesName,
+				es.EngineSeriesDescription as EngineSeriesDescription,
+                es.EngineMarkPageTitle as EngineMarkPageTitle,
+                es.IssueDate as IssueDate,
+                es.SyncDate as SyncDate,
+                es.SyncStatus as SyncStatus,
+                es.Active    
+
+        FROM [TManual].[ST_Engine_Series_Type] es
+        INNER JOIN    [TManual].[ST_Engine_Type] et on  et.Id =es.EngineTypeId
+        WHERE
+            es.EngineTypeId=ISNULL(@engineTypeId,es.EngineTypeId)
+			AND es.Active=1 
+		ORDER BY 
+			es.SequenceOrder
+
+END TRY
+
+BEGIN CATCH
+   EXECUTE [dbo].[LogError]
+END CATCH]]></Value>
+			</Property>
+			<Property Name="IsAnsiNullsOn" Value="True" />
+			<Relationship Name="BodyDependencies">
+				<Entry>
+					<References Name="[TManual].[ST_Engine_Series_Type]" />
+				</Entry>
+				<Entry>
+					<References Name="[TManual].[ST_Engine_Type]" />
+				</Entry>
+				<Entry>
+					<References Name="[TManual].[ST_Engine_Type].[Id]" />
+				</Entry>
+				<Entry>
+					<References Name="[TManual].[ST_Engine_Series_Type].[EngineTypeId]" />
+				</Entry>
+				<Entry>
+					<References Name="[TManual].[ST_Engine_Series_Type].[Id]" />
+				</Entry>
+				<Entry>
+					<References Name="[TManual].[ST_Engine_Series_Type].[EngineTypeId]" />
+				</Entry>
+				<Entry>
+					<References Name="[TManual].[ST_Engine_Type].[EngineName]" />
+				</Entry>
+				<Entry>
+					<References Name="[TManual].[ST_Engine_Series_Type].[EngineSeriesName]" />
+				</Entry>
+				<Entry>
+					<References Name="[TManual].[ST_Engine_Series_Type].[EngineSeriesDescription]" />
+				</Entry>
+				<Entry>
+					<References Name="[TManual].[ST_Engine_Series_Type].[EngineMarkPageTitle]" />
+				</Entry>
+				<Entry>
+					<References Name="[TManual].[ST_Engine_Series_Type].[IssueDate]" />
+				</Entry>
+				<Entry>
+					<References Name="[TManual].[ST_Engine_Series_Type].[SyncDate]" />
+				</Entry>
+				<Entry>
+					<References Name="[TManual].[ST_Engine_Series_Type].[SyncStatus]" />
+				</Entry>
+				<Entry>
+					<References Name="[TManual].[ST_Engine_Series_Type].[Active]" />
+				</Entry>
+				<Entry>
+					<References Name="[SyncTM].[GetEngineSeriesDetails].[@engineTypeId]" />
+				</Entry>
+				<Entry>
+					<References Name="[TManual].[ST_Engine_Series_Type].[SequenceOrder]" />
+				</Entry>
+				<Entry>
+					<References Name="[dbo].[LogError]" />
+				</Entry>
+			</Relationship>
+			<Relationship Name="Parameters">
+				<Entry>
+					<Element Type="SqlSubroutineParameter" Name="[SyncTM].[GetEngineSeriesDetails].[@engineTypeId]">
+						<Relationship Name="Type">
+							<Entry>
+								<Element Type="SqlTypeSpecifier">
+									<Relationship Name="Type">
+										<Entry>
+											<References ExternalSource="BuiltIns" Name="[int]" />
+										</Entry>
+									</Relationship>
+								</Element>
+							</Entry>
+						</Relationship>
+					</Element>
+				</Entry>
+			</Relationship>
+			<Relationship Name="Schema">
+				<Entry>
+					<References Name="[SyncTM]" />
+				</Entry>
+			</Relationship>
+			<Annotation Type="SysCommentsObjectAnnotation">
+				<Property Name="CreateOffset" Value="240" />
+				<Property Name="Length" Value="1382" />
+				<Property Name="StartLine" Value="1" />
+				<Property Name="StartColumn" Value="1" />
+				<Property Name="HeaderContents" Value="&#xD;&#xA;-- =============================================&#xD;&#xA;-- Author:&#x9;&#x9;JohnRaj&#xD;&#xA;-- Create date: 1/12/2018&#xD;&#xA;-- Description:&#x9;Get All Node Publication&#xD;&#xA;-- exec [SyncTM].[GetEngineSeriesDetails] NULL&#xD;&#xA;-- =============================================&#xD;&#xA;CREATE PROCEDURE [SyncTM].[GetEngineSeriesDetails] &#xD;&#xA;&#x9;-- Add the parameters for the stored procedure here&#xD;&#xA;&#x9;@engineTypeId int&#xD;&#xA;AS" />
+			</Annotation>
+		</Element>
+		<Element Type="SqlProcedure" Name="[SyncTM].[UpdateSyncDetailsForTM]">
+			<Property Name="BodyScript">
+				<Value QuotedIdentifiers="True" AnsiNulls="True"><![CDATA[
+BEGIN TRY
+	
+	IF(@flag = 'EngineSeries')   
+	BEGIN
+
+			UPDATE  [TManual].[ST_Engine_Series_Type]
+			SET	    [SyncStatus] = @syncStatus,
+				    [SyncDate] = GETDATE(),
+					[IssueDate] =@issueDate
+			WHERE   [Id] = @id	
+	END
+	ELSE IF(@flag = 'EPublication')
+	BEGIN
+			UPDATE  [TManual].[ST_Engine_Publication_Details]
+			SET	    [SyncStatus] = @syncStatus,
+				    [SyncDate] = GETDATE(),
+					[IssueDate] =@issueDate
+			WHERE   [Id] = @id	
+			
+	END
+	ELSE IF(@flag = 'EPublicationNode')
+	BEGIN
+			UPDATE  [TManual].[ST_Publication_Node_Details]
+			SET	    [SyncStatus] = @syncStatus,
+				    [SyncDate] = GETDATE(),
+					[IssueDate] =@issueDate
+			WHERE   [Id] = @id		
+	END
+	
+END TRY
+BEGIN CATCH
+   EXECUTE [dbo].[LogError]
+END CATCH]]></Value>
+			</Property>
+			<Property Name="IsAnsiNullsOn" Value="True" />
+			<Relationship Name="BodyDependencies">
+				<Entry>
+					<References Name="[SyncTM].[UpdateSyncDetailsForTM].[@flag]" />
+				</Entry>
+				<Entry>
+					<References Name="[TManual].[ST_Engine_Series_Type]" />
+				</Entry>
+				<Entry>
+					<References Name="[TManual].[ST_Engine_Series_Type].[SyncStatus]" />
+				</Entry>
+				<Entry>
+					<References Name="[SyncTM].[UpdateSyncDetailsForTM].[@syncStatus]" />
+				</Entry>
+				<Entry>
+					<References Name="[TManual].[ST_Engine_Series_Type].[SyncDate]" />
+				</Entry>
+				<Entry>
+					<References Name="[TManual].[ST_Engine_Series_Type].[IssueDate]" />
+				</Entry>
+				<Entry>
+					<References Name="[SyncTM].[UpdateSyncDetailsForTM].[@issueDate]" />
+				</Entry>
+				<Entry>
+					<References Name="[TManual].[ST_Engine_Series_Type].[Id]" />
+				</Entry>
+				<Entry>
+					<References Name="[SyncTM].[UpdateSyncDetailsForTM].[@id]" />
+				</Entry>
+				<Entry>
+					<References Name="[TManual].[ST_Engine_Publication_Details]" />
+				</Entry>
+				<Entry>
+					<References Name="[TManual].[ST_Engine_Publication_Details].[SyncStatus]" />
+				</Entry>
+				<Entry>
+					<References Name="[TManual].[ST_Engine_Publication_Details].[SyncDate]" />
+				</Entry>
+				<Entry>
+					<References Name="[TManual].[ST_Engine_Publication_Details].[IssueDate]" />
+				</Entry>
+				<Entry>
+					<References Name="[TManual].[ST_Engine_Publication_Details].[Id]" />
+				</Entry>
+				<Entry>
+					<References Name="[TManual].[ST_Publication_Node_Details]" />
+				</Entry>
+				<Entry>
+					<References Name="[TManual].[ST_Publication_Node_Details].[SyncStatus]" />
+				</Entry>
+				<Entry>
+					<References Name="[TManual].[ST_Publication_Node_Details].[SyncDate]" />
+				</Entry>
+				<Entry>
+					<References Name="[TManual].[ST_Publication_Node_Details].[IssueDate]" />
+				</Entry>
+				<Entry>
+					<References Name="[TManual].[ST_Publication_Node_Details].[Id]" />
+				</Entry>
+				<Entry>
+					<References Name="[dbo].[LogError]" />
+				</Entry>
+			</Relationship>
+			<Relationship Name="Parameters">
+				<Entry>
+					<Element Type="SqlSubroutineParameter" Name="[SyncTM].[UpdateSyncDetailsForTM].[@id]">
+						<Relationship Name="Type">
+							<Entry>
+								<Element Type="SqlTypeSpecifier">
+									<Relationship Name="Type">
+										<Entry>
+											<References ExternalSource="BuiltIns" Name="[int]" />
+										</Entry>
+									</Relationship>
+								</Element>
+							</Entry>
+						</Relationship>
+					</Element>
+				</Entry>
+				<Entry>
+					<Element Type="SqlSubroutineParameter" Name="[SyncTM].[UpdateSyncDetailsForTM].[@flag]">
+						<Relationship Name="Type">
+							<Entry>
+								<Element Type="SqlTypeSpecifier">
+									<Property Name="Length" Value="50" />
+									<Relationship Name="Type">
+										<Entry>
+											<References ExternalSource="BuiltIns" Name="[nvarchar]" />
+										</Entry>
+									</Relationship>
+								</Element>
+							</Entry>
+						</Relationship>
+					</Element>
+				</Entry>
+				<Entry>
+					<Element Type="SqlSubroutineParameter" Name="[SyncTM].[UpdateSyncDetailsForTM].[@syncStatus]">
+						<Relationship Name="Type">
+							<Entry>
+								<Element Type="SqlTypeSpecifier">
+									<Property Name="Length" Value="50" />
+									<Relationship Name="Type">
+										<Entry>
+											<References ExternalSource="BuiltIns" Name="[nvarchar]" />
+										</Entry>
+									</Relationship>
+								</Element>
+							</Entry>
+						</Relationship>
+					</Element>
+				</Entry>
+				<Entry>
+					<Element Type="SqlSubroutineParameter" Name="[SyncTM].[UpdateSyncDetailsForTM].[@issueDate]">
+						<Relationship Name="Type">
+							<Entry>
+								<Element Type="SqlTypeSpecifier">
+									<Relationship Name="Type">
+										<Entry>
+											<References ExternalSource="BuiltIns" Name="[datetime]" />
+										</Entry>
+									</Relationship>
+								</Element>
+							</Entry>
+						</Relationship>
+					</Element>
+				</Entry>
+			</Relationship>
+			<Relationship Name="Schema">
+				<Entry>
+					<References Name="[SyncTM]" />
+				</Entry>
+			</Relationship>
+			<Annotation Type="SysCommentsObjectAnnotation">
+				<Property Name="CreateOffset" Value="272" />
+				<Property Name="Length" Value="1211" />
+				<Property Name="StartLine" Value="1" />
+				<Property Name="StartColumn" Value="1" />
+				<Property Name="HeaderContents" Value="&#xD;&#xA;-- =============================================&#xD;&#xA;-- Author:&#x9;&#x9;Arathy&#xD;&#xA;-- Create date: 3/2/2018&#xD;&#xA;-- Description:&#x9;Update data based flag value &#xD;&#xA;-- exec [SyncTM].[UpdateEngineDetails] 1,'EPublicationNode',InProgress,null&#xD;&#xA;-- =============================================&#xD;&#xA;CREATE PROCEDURE [SyncTM].[UpdateSyncDetailsForTM]&#xD;&#xA;&#x9;&#x9;@id                     int,&#xD;&#xA;&#x9;&#x9;@flag&#x9;&#x9;&#x9;&#x9;&#x9;nvarchar(50),&#xD;&#xA;&#x9;&#x9;@syncStatus&#x9;&#x9;&#x9;&#x9;nvarchar(50),&#xD;&#xA;&#x9;&#x9;@issueDate&#x9;&#x9;&#x9;&#x9;datetime&#xD;&#xA;&#xD;&#xA;AS" />
+			</Annotation>
+		</Element>
+		<Element Type="SqlSchema" Name="[TManual]">
+			<Relationship Name="Authorizer">
+				<Entry>
+					<References ExternalSource="BuiltIns" Name="[dbo]" />
+				</Entry>
+			</Relationship>
+		</Element>
+		<Element Type="SqlDefaultConstraint" Name="[TManual].[DF_OT_Manual_Effectivity_Details_Active]">
+			<Property Name="DefaultExpressionScript">
+				<Value QuotedIdentifiers="True" AnsiNulls="True"><![CDATA[((1))]]></Value>
+			</Property>
+			<Relationship Name="DefiningTable">
+				<Entry>
+					<References Name="[TManual].[OT_Manual_EIPC_Details]" />
+				</Entry>
+			</Relationship>
+			<Relationship Name="ForColumn">
+				<Entry>
+					<References Name="[TManual].[OT_Manual_EIPC_Details].[Active]" />
+				</Entry>
+			</Relationship>
+			<Annotation Type="SqlInlineConstraintAnnotation" Disambiguator="9" />
+		</Element>
+		<Element Type="SqlDefaultConstraint" Name="[TManual].[DF_OT_Manual_Effectivity_Details_CreatedDate]">
+			<Property Name="DefaultExpressionScript">
+				<Value QuotedIdentifiers="True" AnsiNulls="True"><![CDATA[(getdate())]]></Value>
+			</Property>
+			<Relationship Name="DefiningTable">
+				<Entry>
+					<References Name="[TManual].[OT_Manual_EIPC_Details]" />
+				</Entry>
+			</Relationship>
+			<Relationship Name="ForColumn">
+				<Entry>
+					<References Name="[TManual].[OT_Manual_EIPC_Details].[CreatedDate]" />
+				</Entry>
+			</Relationship>
+			<Annotation Type="SqlInlineConstraintAnnotation" Disambiguator="10" />
+		</Element>
+		<Element Type="SqlDefaultConstraint" Name="[TManual].[DF_OT_Publication_Manual_Details_CreatedDate]">
+			<Property Name="DefaultExpressionScript">
+				<Value QuotedIdentifiers="True" AnsiNulls="True"><![CDATA[(getdate())]]></Value>
+			</Property>
+			<Relationship Name="DefiningTable">
+				<Entry>
+					<References Name="[TManual].[OT_Manual_Information_Details]" />
+				</Entry>
+			</Relationship>
+			<Relationship Name="ForColumn">
+				<Entry>
+					<References Name="[TManual].[OT_Manual_Information_Details].[CreatedDate]" />
+				</Entry>
+			</Relationship>
+			<Annotation Type="SqlInlineConstraintAnnotation" Disambiguator="11" />
+		</Element>
+		<Element Type="SqlDefaultConstraint" Name="[TManual].[DF_ST_Builder_Publication_Node_Details_CreatedDate]">
+			<Property Name="DefaultExpressionScript">
+				<Value QuotedIdentifiers="True" AnsiNulls="True"><![CDATA[(getdate())]]></Value>
+			</Property>
+			<Relationship Name="DefiningTable">
+				<Entry>
+					<References Name="[TManual].[ST_Publication_Node_Details]" />
+				</Entry>
+			</Relationship>
+			<Relationship Name="ForColumn">
+				<Entry>
+					<References Name="[TManual].[ST_Publication_Node_Details].[CreatedDate]" />
+				</Entry>
+			</Relationship>
+			<Annotation Type="SqlInlineConstraintAnnotation" Disambiguator="12" />
+		</Element>
+		<Element Type="SqlDefaultConstraint" Name="[TManual].[DF_ST_Engine_Mark_Type_CreatedDate]">
+			<Property Name="DefaultExpressionScript">
+				<Value QuotedIdentifiers="True" AnsiNulls="True"><![CDATA[(getdate())]]></Value>
+			</Property>
+			<Relationship Name="DefiningTable">
+				<Entry>
+					<References Name="[TManual].[ST_Engine_Mark_Type]" />
+				</Entry>
+			</Relationship>
+			<Relationship Name="ForColumn">
+				<Entry>
+					<References Name="[TManual].[ST_Engine_Mark_Type].[CreatedDate]" />
+				</Entry>
+			</Relationship>
+			<Annotation Type="SqlInlineConstraintAnnotation" Disambiguator="13" />
+		</Element>
+		<Element Type="SqlDefaultConstraint" Name="[TManual].[DF_ST_Engine_Publication_Details_Active]">
+			<Property Name="DefaultExpressionScript">
+				<Value QuotedIdentifiers="True" AnsiNulls="True"><![CDATA[((1))]]></Value>
+			</Property>
+			<Relationship Name="DefiningTable">
+				<Entry>
+					<References Name="[TManual].[ST_Engine_Publication_Details]" />
+				</Entry>
+			</Relationship>
+			<Relationship Name="ForColumn">
+				<Entry>
+					<References Name="[TManual].[ST_Engine_Publication_Details].[Active]" />
+				</Entry>
+			</Relationship>
+			<Annotation Type="SqlInlineConstraintAnnotation" Disambiguator="14" />
+		</Element>
+		<Element Type="SqlDefaultConstraint" Name="[TManual].[DF_ST_Engine_Publication_Details_SyncStatus]">
+			<Property Name="DefaultExpressionScript">
+				<Value QuotedIdentifiers="True" AnsiNulls="True"><![CDATA[(N'NotStarted')]]></Value>
+			</Property>
+			<Relationship Name="DefiningTable">
+				<Entry>
+					<References Name="[TManual].[ST_Engine_Publication_Details]" />
+				</Entry>
+			</Relationship>
+			<Relationship Name="ForColumn">
+				<Entry>
+					<References Name="[TManual].[ST_Engine_Publication_Details].[SyncStatus]" />
+				</Entry>
+			</Relationship>
+			<Annotation Type="SqlInlineConstraintAnnotation" Disambiguator="15" />
+		</Element>
+		<Element Type="SqlDefaultConstraint" Name="[TManual].[DF_ST_Engine_Series_Type_CreatedDate]">
+			<Property Name="DefaultExpressionScript">
+				<Value QuotedIdentifiers="True" AnsiNulls="True"><![CDATA[(getdate())]]></Value>
+			</Property>
+			<Relationship Name="DefiningTable">
+				<Entry>
+					<References Name="[TManual].[ST_Engine_Series_Type]" />
+				</Entry>
+			</Relationship>
+			<Relationship Name="ForColumn">
+				<Entry>
+					<References Name="[TManual].[ST_Engine_Series_Type].[CreatedDate]" />
+				</Entry>
+			</Relationship>
+			<Annotation Type="SqlInlineConstraintAnnotation" Disambiguator="16" />
+		</Element>
+		<Element Type="SqlDefaultConstraint" Name="[TManual].[DF_ST_Engine_Type_CreatedDate]">
+			<Property Name="DefaultExpressionScript">
+				<Value QuotedIdentifiers="True" AnsiNulls="True"><![CDATA[(getdate())]]></Value>
+			</Property>
+			<Relationship Name="DefiningTable">
+				<Entry>
+					<References Name="[TManual].[ST_Engine_Type]" />
+				</Entry>
+			</Relationship>
+			<Relationship Name="ForColumn">
+				<Entry>
+					<References Name="[TManual].[ST_Engine_Type].[CreatedDate]" />
+				</Entry>
+			</Relationship>
+			<Annotation Type="SqlInlineConstraintAnnotation" Disambiguator="17" />
+		</Element>
+		<Element Type="SqlDefaultConstraint" Name="[TManual].[DF_ST_Publication_Node_Details_CreatedDate]">
+			<Property Name="DefaultExpressionScript">
+				<Value QuotedIdentifiers="True" AnsiNulls="True"><![CDATA[(getdate())]]></Value>
+			</Property>
+			<Relationship Name="DefiningTable">
+				<Entry>
+					<References Name="[TManual].[ST_Engine_Publication_Details]" />
+				</Entry>
+			</Relationship>
+			<Relationship Name="ForColumn">
+				<Entry>
+					<References Name="[TManual].[ST_Engine_Publication_Details].[CreatedDate]" />
+				</Entry>
+			</Relationship>
+			<Annotation Type="SqlInlineConstraintAnnotation" Disambiguator="18" />
+		</Element>
+		<Element Type="SqlDefaultConstraint" Name="[TManual].[DF_ST_Publication_Node_Details_IsDrawingAvailable]">
+			<Property Name="DefaultExpressionScript">
+				<Value QuotedIdentifiers="True" AnsiNulls="True"><![CDATA[((1))]]></Value>
+			</Property>
+			<Relationship Name="DefiningTable">
+				<Entry>
+					<References Name="[TManual].[ST_Publication_Node_Details]" />
+				</Entry>
+			</Relationship>
+			<Relationship Name="ForColumn">
+				<Entry>
+					<References Name="[TManual].[ST_Publication_Node_Details].[IsDrawingAvailable]" />
+				</Entry>
+			</Relationship>
+			<Annotation Type="SqlInlineConstraintAnnotation" Disambiguator="19" />
+		</Element>
+		<Element Type="SqlDefaultConstraint" Name="[TManual].[DF_ST_Publication_Node_Details_SyncStatus]">
+			<Property Name="DefaultExpressionScript">
+				<Value QuotedIdentifiers="True" AnsiNulls="True"><![CDATA[(N'NotStarted')]]></Value>
+			</Property>
+			<Relationship Name="DefiningTable">
+				<Entry>
+					<References Name="[TManual].[ST_Publication_Node_Details]" />
+				</Entry>
+			</Relationship>
+			<Relationship Name="ForColumn">
+				<Entry>
+					<References Name="[TManual].[ST_Publication_Node_Details].[SyncStatus]" />
+				</Entry>
+			</Relationship>
+			<Annotation Type="SqlInlineConstraintAnnotation" Disambiguator="20" />
+		</Element>
+		<Element Type="SqlForeignKeyConstraint" Name="[TManual].[FK_OT_Manual_Effectivity_Details_OT_Publication_Manual_Details]">
+			<Relationship Name="Columns">
+				<Entry>
+					<References Name="[TManual].[OT_Manual_EIPC_Details].[PublicationManualId]" />
+				</Entry>
+			</Relationship>
+			<Relationship Name="DefiningTable">
+				<Entry>
+					<References Name="[TManual].[OT_Manual_EIPC_Details]" />
+				</Entry>
+			</Relationship>
+			<Relationship Name="ForeignColumns">
+				<Entry>
+					<References Name="[TManual].[OT_Manual_Information_Details].[Id]" />
+				</Entry>
+			</Relationship>
+			<Relationship Name="ForeignTable">
+				<Entry>
+					<References Name="[TManual].[OT_Manual_Information_Details]" />
+				</Entry>
+			</Relationship>
+			<Annotation Type="SqlInlineConstraintAnnotation" Disambiguator="21" />
+		</Element>
+		<Element Type="SqlForeignKeyConstraint" Name="[TManual].[FK_OT_Publication_Manual_Details_ST_Builder_Publication_Node_Details]">
+			<Relationship Name="Columns">
+				<Entry>
+					<References Name="[TManual].[OT_Manual_Information_Details].[PublicationNodeId]" />
+				</Entry>
+			</Relationship>
+			<Relationship Name="DefiningTable">
+				<Entry>
+					<References Name="[TManual].[OT_Manual_Information_Details]" />
+				</Entry>
+			</Relationship>
+			<Relationship Name="ForeignColumns">
+				<Entry>
+					<References Name="[TManual].[ST_Publication_Node_Details].[Id]" />
+				</Entry>
+			</Relationship>
+			<Relationship Name="ForeignTable">
+				<Entry>
+					<References Name="[TManual].[ST_Publication_Node_Details]" />
+				</Entry>
+			</Relationship>
+			<Annotation Type="SqlInlineConstraintAnnotation" Disambiguator="22" />
+		</Element>
+		<Element Type="SqlForeignKeyConstraint" Name="[TManual].[FK_ST_Engine_Mark_Type_ST_Engine_Series_Type]">
+			<Relationship Name="Columns">
+				<Entry>
+					<References Name="[TManual].[ST_Engine_Mark_Type].[EngineSeriesTypeId]" />
+				</Entry>
+			</Relationship>
+			<Relationship Name="DefiningTable">
+				<Entry>
+					<References Name="[TManual].[ST_Engine_Mark_Type]" />
+				</Entry>
+			</Relationship>
+			<Relationship Name="ForeignColumns">
+				<Entry>
+					<References Name="[TManual].[ST_Engine_Series_Type].[Id]" />
+				</Entry>
+			</Relationship>
+			<Relationship Name="ForeignTable">
+				<Entry>
+					<References Name="[TManual].[ST_Engine_Series_Type]" />
+				</Entry>
+			</Relationship>
+			<Annotation Type="SqlInlineConstraintAnnotation" Disambiguator="23" />
+		</Element>
+		<Element Type="SqlForeignKeyConstraint" Name="[TManual].[FK_ST_Engine_Publication_Details_ST_Engine_Mark_Type]">
+			<Relationship Name="Columns">
+				<Entry>
+					<References Name="[TManual].[ST_Engine_Publication_Details].[EngineMarkId]" />
+				</Entry>
+			</Relationship>
+			<Relationship Name="DefiningTable">
+				<Entry>
+					<References Name="[TManual].[ST_Engine_Publication_Details]" />
+				</Entry>
+			</Relationship>
+			<Relationship Name="ForeignColumns">
+				<Entry>
+					<References Name="[TManual].[ST_Engine_Mark_Type].[Id]" />
+				</Entry>
+			</Relationship>
+			<Relationship Name="ForeignTable">
+				<Entry>
+					<References Name="[TManual].[ST_Engine_Mark_Type]" />
+				</Entry>
+			</Relationship>
+			<Annotation Type="SqlInlineConstraintAnnotation" Disambiguator="24" />
+		</Element>
+		<Element Type="SqlForeignKeyConstraint" Name="[TManual].[FK_ST_Engine_Publication_Details_ST_Engine_Series_Type]">
+			<Relationship Name="Columns">
+				<Entry>
+					<References Name="[TManual].[ST_Engine_Publication_Details].[EngineSeriesId]" />
+				</Entry>
+			</Relationship>
+			<Relationship Name="DefiningTable">
+				<Entry>
+					<References Name="[TManual].[ST_Engine_Publication_Details]" />
+				</Entry>
+			</Relationship>
+			<Relationship Name="ForeignColumns">
+				<Entry>
+					<References Name="[TManual].[ST_Engine_Series_Type].[Id]" />
+				</Entry>
+			</Relationship>
+			<Relationship Name="ForeignTable">
+				<Entry>
+					<References Name="[TManual].[ST_Engine_Series_Type]" />
+				</Entry>
+			</Relationship>
+			<Annotation Type="SqlInlineConstraintAnnotation" Disambiguator="25" />
+		</Element>
+		<Element Type="SqlForeignKeyConstraint" Name="[TManual].[FK_ST_Engine_Publication_Details_ST_Engine_Type]">
+			<Relationship Name="Columns">
+				<Entry>
+					<References Name="[TManual].[ST_Engine_Publication_Details].[EngineTypeId]" />
+				</Entry>
+			</Relationship>
+			<Relationship Name="DefiningTable">
+				<Entry>
+					<References Name="[TManual].[ST_Engine_Publication_Details]" />
+				</Entry>
+			</Relationship>
+			<Relationship Name="ForeignColumns">
+				<Entry>
+					<References Name="[TManual].[ST_Engine_Type].[Id]" />
+				</Entry>
+			</Relationship>
+			<Relationship Name="ForeignTable">
+				<Entry>
+					<References Name="[TManual].[ST_Engine_Type]" />
+				</Entry>
+			</Relationship>
+			<Annotation Type="SqlInlineConstraintAnnotation" Disambiguator="26" />
+		</Element>
+		<Element Type="SqlForeignKeyConstraint" Name="[TManual].[FK_ST_Engine_Series_Type_ST_Engine_Type1]">
+			<Relationship Name="Columns">
+				<Entry>
+					<References Name="[TManual].[ST_Engine_Series_Type].[EngineTypeId]" />
+				</Entry>
+			</Relationship>
+			<Relationship Name="DefiningTable">
+				<Entry>
+					<References Name="[TManual].[ST_Engine_Series_Type]" />
+				</Entry>
+			</Relationship>
+			<Relationship Name="ForeignColumns">
+				<Entry>
+					<References Name="[TManual].[ST_Engine_Type].[Id]" />
+				</Entry>
+			</Relationship>
+			<Relationship Name="ForeignTable">
+				<Entry>
+					<References Name="[TManual].[ST_Engine_Type]" />
+				</Entry>
+			</Relationship>
+			<Annotation Type="SqlInlineConstraintAnnotation" Disambiguator="27" />
+		</Element>
+		<Element Type="SqlProcedure" Name="[TManual].[InsertEngineMarkDetails]">
+			<Property Name="BodyScript">
+				<Value QuotedIdentifiers="True" AnsiNulls="True"><![CDATA[
+BEGIN TRY
+
+	DECLARE @count bigint
+
+	SET @count = (SELECT COUNT(*) FROM [TManual].[ST_Engine_Mark_Type] 
+								  WHERE EngineSeriesTypeId=@engineSeriesTypeId)  
+	IF(@count = 0)   
+	BEGIN
+			INSERT INTO [TManual].[ST_Engine_Mark_Type]
+			(
+				EngineSeriesTypeId,
+				EngineMarkName,
+				EngineMarkDescription
+			)
+			VALUES 
+			(
+				 @engineSeriesTypeId
+				,@engineMarkName
+				,@engineMarkDescription
+			)
+	END
+END TRY
+BEGIN CATCH
+   EXECUTE [dbo].[LogError]
+END CATCH]]></Value>
+			</Property>
+			<Property Name="IsAnsiNullsOn" Value="True" />
+			<Relationship Name="BodyDependencies">
+				<Entry>
+					<References ExternalSource="BuiltIns" Name="[bigint]" />
+				</Entry>
+				<Entry>
+					<References Name="[TManual].[ST_Engine_Mark_Type]" />
+				</Entry>
+				<Entry>
+					<References Name="[TManual].[ST_Engine_Mark_Type].[EngineSeriesTypeId]" />
+				</Entry>
+				<Entry>
+					<References Name="[TManual].[InsertEngineMarkDetails].[@engineSeriesTypeId]" />
+				</Entry>
+				<Entry>
+					<References Name="[TManual].[ST_Engine_Mark_Type].[EngineSeriesTypeId]" />
+				</Entry>
+				<Entry>
+					<References Name="[TManual].[ST_Engine_Mark_Type].[EngineMarkName]" />
+				</Entry>
+				<Entry>
+					<References Name="[TManual].[ST_Engine_Mark_Type].[EngineMarkDescription]" />
+				</Entry>
+				<Entry>
+					<References Name="[TManual].[InsertEngineMarkDetails].[@engineMarkName]" />
+				</Entry>
+				<Entry>
+					<References Name="[TManual].[InsertEngineMarkDetails].[@engineMarkDescription]" />
+				</Entry>
+				<Entry>
+					<References Name="[dbo].[LogError]" />
+				</Entry>
+			</Relationship>
+			<Relationship Name="Parameters">
+				<Entry>
+					<Element Type="SqlSubroutineParameter" Name="[TManual].[InsertEngineMarkDetails].[@engineSeriesTypeId]">
+						<Relationship Name="Type">
+							<Entry>
+								<Element Type="SqlTypeSpecifier">
+									<Relationship Name="Type">
+										<Entry>
+											<References ExternalSource="BuiltIns" Name="[bigint]" />
+										</Entry>
+									</Relationship>
+								</Element>
+							</Entry>
+						</Relationship>
+					</Element>
+				</Entry>
+				<Entry>
+					<Element Type="SqlSubroutineParameter" Name="[TManual].[InsertEngineMarkDetails].[@engineMarkName]">
+						<Relationship Name="Type">
+							<Entry>
+								<Element Type="SqlTypeSpecifier">
+									<Property Name="Length" Value="50" />
+									<Relationship Name="Type">
+										<Entry>
+											<References ExternalSource="BuiltIns" Name="[nvarchar]" />
+										</Entry>
+									</Relationship>
+								</Element>
+							</Entry>
+						</Relationship>
+					</Element>
+				</Entry>
+				<Entry>
+					<Element Type="SqlSubroutineParameter" Name="[TManual].[InsertEngineMarkDetails].[@engineMarkDescription]">
+						<Relationship Name="Type">
+							<Entry>
+								<Element Type="SqlTypeSpecifier">
+									<Property Name="Length" Value="200" />
+									<Relationship Name="Type">
+										<Entry>
+											<References ExternalSource="BuiltIns" Name="[nvarchar]" />
+										</Entry>
+									</Relationship>
+								</Element>
+							</Entry>
+						</Relationship>
+					</Element>
+				</Entry>
+			</Relationship>
+			<Relationship Name="Schema">
+				<Entry>
+					<References Name="[TManual]" />
+				</Entry>
+			</Relationship>
+			<Annotation Type="SysCommentsObjectAnnotation">
+				<Property Name="CreateOffset" Value="257" />
+				<Property Name="Length" Value="929" />
+				<Property Name="StartLine" Value="1" />
+				<Property Name="StartColumn" Value="1" />
+				<Property Name="HeaderContents" Value="&#xD;&#xA;-- =============================================&#xD;&#xA;--PROCEDURE: [TManual].[InsertEngineMarkDetails] &#xD;&#xA;--PURPOSE: Insert engine mark data to [TManual].[ST_Engine_Mark_Type]&#xD;&#xA;--CREATED: Vyshna P 01/30/2018&#xD;&#xA;-- ============================================= &#xD;&#xA;CREATE PROCEDURE [TManual].[InsertEngineMarkDetails]&#xD;&#xA;&#x9;@engineSeriesTypeId     bigint,&#xD;&#xA;&#x9;@engineMarkName         nvarchar(50),  &#xD;&#xA;&#x9;@engineMarkDescription  nvarchar(200)&#xD;&#xA;&#xD;&#xA;AS" />
+			</Annotation>
+		</Element>
+		<Element Type="SqlProcedure" Name="[TManual].[InsertEnginePublicationDetails]">
+			<Property Name="BodyScript">
+				<Value QuotedIdentifiers="True" AnsiNulls="True"><![CDATA[
+BEGIN TRY
+
+	DECLARE @count int
+
+	SET @count = (SELECT COUNT(*) FROM [TManual].[ST_Engine_Publication_Details] 
+				  WHERE EngineTypeId=@engineTypeId
+				   AND EngineSeriesId=@engineSeriesId
+				   AND EngineMarkId =@engineMarkId
+				 )  
+
+	IF(@count=0)   
+	BEGIN    
+			INSERT INTO [TManual].[ST_Engine_Publication_Details]
+			(
+				 EngineTypeId
+				,EngineSeriesId
+				,EngineMarkId
+				,EnginePublicationShotName
+				,EnginePublicationLongName
+				,EnginePublicationDescription
+				,IssueDate
+			)
+			VALUES  
+			(
+				 @engineTypeId
+				,@engineSeriesId
+				,@engineMarkId
+				,@enginePublicationShotName
+				,@enginePublicationLongName
+				,@enginePublicationDescription
+				,@issueDate
+			)
+	END
+END TRY
+BEGIN CATCH
+   EXECUTE [dbo].[LogError]
+END CATCH]]></Value>
+			</Property>
+			<Property Name="IsAnsiNullsOn" Value="True" />
+			<Relationship Name="BodyDependencies">
+				<Entry>
+					<References ExternalSource="BuiltIns" Name="[int]" />
+				</Entry>
+				<Entry>
+					<References Name="[TManual].[ST_Engine_Publication_Details]" />
+				</Entry>
+				<Entry>
+					<References Name="[TManual].[ST_Engine_Publication_Details].[EngineTypeId]" />
+				</Entry>
+				<Entry>
+					<References Name="[TManual].[InsertEnginePublicationDetails].[@engineTypeId]" />
+				</Entry>
+				<Entry>
+					<References Name="[TManual].[ST_Engine_Publication_Details].[EngineSeriesId]" />
+				</Entry>
+				<Entry>
+					<References Name="[TManual].[InsertEnginePublicationDetails].[@engineSeriesId]" />
+				</Entry>
+				<Entry>
+					<References Name="[TManual].[ST_Engine_Publication_Details].[EngineMarkId]" />
+				</Entry>
+				<Entry>
+					<References Name="[TManual].[InsertEnginePublicationDetails].[@engineMarkId]" />
+				</Entry>
+				<Entry>
+					<References Name="[TManual].[ST_Engine_Publication_Details].[EngineTypeId]" />
+				</Entry>
+				<Entry>
+					<References Name="[TManual].[ST_Engine_Publication_Details].[EngineSeriesId]" />
+				</Entry>
+				<Entry>
+					<References Name="[TManual].[ST_Engine_Publication_Details].[EngineMarkId]" />
+				</Entry>
+				<Entry>
+					<References Name="[TManual].[ST_Engine_Publication_Details].[EnginePublicationShotName]" />
+				</Entry>
+				<Entry>
+					<References Name="[TManual].[ST_Engine_Publication_Details].[EnginePublicationLongName]" />
+				</Entry>
+				<Entry>
+					<References Name="[TManual].[ST_Engine_Publication_Details].[EnginePublicationDescription]" />
+				</Entry>
+				<Entry>
+					<References Name="[TManual].[ST_Engine_Publication_Details].[IssueDate]" />
+				</Entry>
+				<Entry>
+					<References Name="[TManual].[InsertEnginePublicationDetails].[@enginePublicationShotName]" />
+				</Entry>
+				<Entry>
+					<References Name="[TManual].[InsertEnginePublicationDetails].[@enginePublicationLongName]" />
+				</Entry>
+				<Entry>
+					<References Name="[TManual].[InsertEnginePublicationDetails].[@enginePublicationDescription]" />
+				</Entry>
+				<Entry>
+					<References Name="[TManual].[InsertEnginePublicationDetails].[@issueDate]" />
+				</Entry>
+				<Entry>
+					<References Name="[dbo].[LogError]" />
+				</Entry>
+			</Relationship>
+			<Relationship Name="Parameters">
+				<Entry>
+					<Element Type="SqlSubroutineParameter" Name="[TManual].[InsertEnginePublicationDetails].[@engineTypeId]">
+						<Relationship Name="Type">
+							<Entry>
+								<Element Type="SqlTypeSpecifier">
+									<Relationship Name="Type">
+										<Entry>
+											<References ExternalSource="BuiltIns" Name="[int]" />
+										</Entry>
+									</Relationship>
+								</Element>
+							</Entry>
+						</Relationship>
+					</Element>
+				</Entry>
+				<Entry>
+					<Element Type="SqlSubroutineParameter" Name="[TManual].[InsertEnginePublicationDetails].[@engineSeriesId]">
+						<Relationship Name="Type">
+							<Entry>
+								<Element Type="SqlTypeSpecifier">
+									<Relationship Name="Type">
+										<Entry>
+											<References ExternalSource="BuiltIns" Name="[bigint]" />
+										</Entry>
+									</Relationship>
+								</Element>
+							</Entry>
+						</Relationship>
+					</Element>
+				</Entry>
+				<Entry>
+					<Element Type="SqlSubroutineParameter" Name="[TManual].[InsertEnginePublicationDetails].[@engineMarkId]">
+						<Relationship Name="Type">
+							<Entry>
+								<Element Type="SqlTypeSpecifier">
+									<Relationship Name="Type">
+										<Entry>
+											<References ExternalSource="BuiltIns" Name="[bigint]" />
+										</Entry>
+									</Relationship>
+								</Element>
+							</Entry>
+						</Relationship>
+					</Element>
+				</Entry>
+				<Entry>
+					<Element Type="SqlSubroutineParameter" Name="[TManual].[InsertEnginePublicationDetails].[@enginePublicationShotName]">
+						<Relationship Name="Type">
+							<Entry>
+								<Element Type="SqlTypeSpecifier">
+									<Property Name="Length" Value="50" />
+									<Relationship Name="Type">
+										<Entry>
+											<References ExternalSource="BuiltIns" Name="[nvarchar]" />
+										</Entry>
+									</Relationship>
+								</Element>
+							</Entry>
+						</Relationship>
+					</Element>
+				</Entry>
+				<Entry>
+					<Element Type="SqlSubroutineParameter" Name="[TManual].[InsertEnginePublicationDetails].[@enginePublicationLongName]">
+						<Relationship Name="Type">
+							<Entry>
+								<Element Type="SqlTypeSpecifier">
+									<Property Name="Length" Value="20" />
+									<Relationship Name="Type">
+										<Entry>
+											<References ExternalSource="BuiltIns" Name="[nvarchar]" />
+										</Entry>
+									</Relationship>
+								</Element>
+							</Entry>
+						</Relationship>
+					</Element>
+				</Entry>
+				<Entry>
+					<Element Type="SqlSubroutineParameter" Name="[TManual].[InsertEnginePublicationDetails].[@enginePublicationDescription]">
+						<Relationship Name="Type">
+							<Entry>
+								<Element Type="SqlTypeSpecifier">
+									<Property Name="Length" Value="50" />
+									<Relationship Name="Type">
+										<Entry>
+											<References ExternalSource="BuiltIns" Name="[nvarchar]" />
+										</Entry>
+									</Relationship>
+								</Element>
+							</Entry>
+						</Relationship>
+					</Element>
+				</Entry>
+				<Entry>
+					<Element Type="SqlSubroutineParameter" Name="[TManual].[InsertEnginePublicationDetails].[@issueDate]">
+						<Relationship Name="Type">
+							<Entry>
+								<Element Type="SqlTypeSpecifier">
+									<Relationship Name="Type">
+										<Entry>
+											<References ExternalSource="BuiltIns" Name="[datetime]" />
+										</Entry>
+									</Relationship>
+								</Element>
+							</Entry>
+						</Relationship>
+					</Element>
+				</Entry>
+			</Relationship>
+			<Relationship Name="Schema">
+				<Entry>
+					<References Name="[TManual]" />
+				</Entry>
+			</Relationship>
+			<Annotation Type="SysCommentsObjectAnnotation">
+				<Property Name="CreateOffset" Value="284" />
+				<Property Name="Length" Value="1397" />
+				<Property Name="StartLine" Value="1" />
+				<Property Name="StartColumn" Value="1" />
+				<Property Name="HeaderContents" Value="&#xD;&#xA;-- =============================================&#xD;&#xA;--PROCEDURE: [TManual]].[InsertEnginePublicationDetails] &#xD;&#xA;--PURPOSE: Insert engine publication data to [TManual].[ST_Engine_Publication_Details]&#xD;&#xA;--CREATED: Vyshna P 01/30/2018&#xD;&#xA;-- ============================================= &#xD;&#xA;&#xD;&#xA;CREATE PROCEDURE [TManual].[InsertEnginePublicationDetails]&#xD;&#xA;&#x9;@engineTypeId&#x9;&#x9;&#x9;&#x9;&#x9;int,&#xD;&#xA;&#x9;@engineSeriesId&#x9;&#x9;&#x9;&#x9;&#x9;bigint,  &#xD;&#xA;&#x9;@engineMarkId&#x9;&#x9;&#x9;&#x9;&#x9;bigint, &#xD;&#xA;&#x9;@enginePublicationShotName&#x9;&#x9;nvarchar(50), &#xD;&#xA;&#x9;@enginePublicationLongName&#x9;&#x9;nvarchar(20), &#xD;&#xA;&#x9;@enginePublicationDescription&#x9;nvarchar(50),&#xD;&#xA;&#x9;@issueDate&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;datetime&#xD;&#xA;&#xD;&#xA;AS" />
+			</Annotation>
+		</Element>
+		<Element Type="SqlProcedure" Name="[TManual].[InsertPublicationNodeDetails]">
+			<Property Name="BodyScript">
+				<Value QuotedIdentifiers="True" AnsiNulls="True"><![CDATA[
+
+	DECLARE @count bigint
+
+BEGIN TRY
+	SET @count = (SELECT COUNT(*) FROM [TManual].[ST_Publication_Node_Details] 
+				  WHERE EnginePublicationId=@enginePublicationId
+				 )
+
+	IF(@count = 0)
+	BEGIN
+    
+		INSERT INTO [TManual].[ST_Publication_Node_Details]
+		(
+			 EnginePublicationId
+			,ChapterLevel
+			,SectionLevel
+			,PageBlockLevelName
+			,FunctionalCode
+			,TaskLevelNumber
+			,TaskLevelName
+			,SequenceNumber
+			,IsDrawingAvailable
+			,IssueDate
+			,SyncDate
+		)
+		VALUES 
+		(
+			 @enginePublicationId
+			,@chapterLevel
+			,@sectionLevel
+			,@pageBlockLevel
+			,@functionalCode
+			,@taskLevelNumber
+			,@taskLeveName
+			,@sequenceNumber
+			,@isDrawingAvailable
+			,@issueDate
+			,@syncDate
+		)
+	END
+END TRY
+BEGIN CATCH
+   EXECUTE [dbo].[LogError]
+END CATCH]]></Value>
+			</Property>
+			<Property Name="IsAnsiNullsOn" Value="True" />
+			<Relationship Name="BodyDependencies">
+				<Entry>
+					<References ExternalSource="BuiltIns" Name="[bigint]" />
+				</Entry>
+				<Entry>
+					<References Name="[TManual].[ST_Publication_Node_Details]" />
+				</Entry>
+				<Entry>
+					<References Name="[TManual].[ST_Publication_Node_Details].[EnginePublicationId]" />
+				</Entry>
+				<Entry>
+					<References Name="[TManual].[InsertPublicationNodeDetails].[@enginePublicationId]" />
+				</Entry>
+				<Entry>
+					<References Name="[TManual].[ST_Publication_Node_Details].[EnginePublicationId]" />
+				</Entry>
+				<Entry>
+					<References Name="[TManual].[ST_Publication_Node_Details].[ChapterLevel]" />
+				</Entry>
+				<Entry>
+					<References Name="[TManual].[ST_Publication_Node_Details].[SectionLevel]" />
+				</Entry>
+				<Entry>
+					<References Name="[TManual].[ST_Publication_Node_Details].[PageBlockLevelName]" />
+				</Entry>
+				<Entry>
+					<References Name="[TManual].[ST_Publication_Node_Details].[FunctionalCode]" />
+				</Entry>
+				<Entry>
+					<References Name="[TManual].[ST_Publication_Node_Details].[TaskLevelNumber]" />
+				</Entry>
+				<Entry>
+					<References Name="[TManual].[ST_Publication_Node_Details].[TaskLevelName]" />
+				</Entry>
+				<Entry>
+					<References Name="[TManual].[ST_Publication_Node_Details].[SequenceNumber]" />
+				</Entry>
+				<Entry>
+					<References Name="[TManual].[ST_Publication_Node_Details].[IsDrawingAvailable]" />
+				</Entry>
+				<Entry>
+					<References Name="[TManual].[ST_Publication_Node_Details].[IssueDate]" />
+				</Entry>
+				<Entry>
+					<References Name="[TManual].[ST_Publication_Node_Details].[SyncDate]" />
+				</Entry>
+				<Entry>
+					<References Name="[TManual].[InsertPublicationNodeDetails].[@chapterLevel]" />
+				</Entry>
+				<Entry>
+					<References Name="[TManual].[InsertPublicationNodeDetails].[@sectionLevel]" />
+				</Entry>
+				<Entry>
+					<References Name="[TManual].[InsertPublicationNodeDetails].[@pageBlockLevel]" />
+				</Entry>
+				<Entry>
+					<References Name="[TManual].[InsertPublicationNodeDetails].[@functionalCode]" />
+				</Entry>
+				<Entry>
+					<References Name="[TManual].[InsertPublicationNodeDetails].[@taskLevelNumber]" />
+				</Entry>
+				<Entry>
+					<References Name="[TManual].[InsertPublicationNodeDetails].[@taskLeveName]" />
+				</Entry>
+				<Entry>
+					<References Name="[TManual].[InsertPublicationNodeDetails].[@sequenceNumber]" />
+				</Entry>
+				<Entry>
+					<References Name="[TManual].[InsertPublicationNodeDetails].[@isDrawingAvailable]" />
+				</Entry>
+				<Entry>
+					<References Name="[TManual].[InsertPublicationNodeDetails].[@issueDate]" />
+				</Entry>
+				<Entry>
+					<References Name="[TManual].[InsertPublicationNodeDetails].[@syncDate]" />
+				</Entry>
+				<Entry>
+					<References Name="[dbo].[LogError]" />
+				</Entry>
+			</Relationship>
+			<Relationship Name="Parameters">
+				<Entry>
+					<Element Type="SqlSubroutineParameter" Name="[TManual].[InsertPublicationNodeDetails].[@enginePublicationId]">
+						<Relationship Name="Type">
+							<Entry>
+								<Element Type="SqlTypeSpecifier">
+									<Relationship Name="Type">
+										<Entry>
+											<References ExternalSource="BuiltIns" Name="[bigint]" />
+										</Entry>
+									</Relationship>
+								</Element>
+							</Entry>
+						</Relationship>
+					</Element>
+				</Entry>
+				<Entry>
+					<Element Type="SqlSubroutineParameter" Name="[TManual].[InsertPublicationNodeDetails].[@chapterLevel]">
+						<Relationship Name="Type">
+							<Entry>
+								<Element Type="SqlTypeSpecifier">
+									<Property Name="Length" Value="200" />
+									<Relationship Name="Type">
+										<Entry>
+											<References ExternalSource="BuiltIns" Name="[nvarchar]" />
+										</Entry>
+									</Relationship>
+								</Element>
+							</Entry>
+						</Relationship>
+					</Element>
+				</Entry>
+				<Entry>
+					<Element Type="SqlSubroutineParameter" Name="[TManual].[InsertPublicationNodeDetails].[@sectionLevel]">
+						<Relationship Name="Type">
+							<Entry>
+								<Element Type="SqlTypeSpecifier">
+									<Property Name="Length" Value="200" />
+									<Relationship Name="Type">
+										<Entry>
+											<References ExternalSource="BuiltIns" Name="[nvarchar]" />
+										</Entry>
+									</Relationship>
+								</Element>
+							</Entry>
+						</Relationship>
+					</Element>
+				</Entry>
+				<Entry>
+					<Element Type="SqlSubroutineParameter" Name="[TManual].[InsertPublicationNodeDetails].[@pageBlockLevel]">
+						<Relationship Name="Type">
+							<Entry>
+								<Element Type="SqlTypeSpecifier">
+									<Property Name="Length" Value="200" />
+									<Relationship Name="Type">
+										<Entry>
+											<References ExternalSource="BuiltIns" Name="[nvarchar]" />
+										</Entry>
+									</Relationship>
+								</Element>
+							</Entry>
+						</Relationship>
+					</Element>
+				</Entry>
+				<Entry>
+					<Element Type="SqlSubroutineParameter" Name="[TManual].[InsertPublicationNodeDetails].[@functionalCode]">
+						<Relationship Name="Type">
+							<Entry>
+								<Element Type="SqlTypeSpecifier">
+									<Property Name="Length" Value="200" />
+									<Relationship Name="Type">
+										<Entry>
+											<References ExternalSource="BuiltIns" Name="[nvarchar]" />
+										</Entry>
+									</Relationship>
+								</Element>
+							</Entry>
+						</Relationship>
+					</Element>
+				</Entry>
+				<Entry>
+					<Element Type="SqlSubroutineParameter" Name="[TManual].[InsertPublicationNodeDetails].[@taskLevelNumber]">
+						<Relationship Name="Type">
+							<Entry>
+								<Element Type="SqlTypeSpecifier">
+									<Property Name="Length" Value="200" />
+									<Relationship Name="Type">
+										<Entry>
+											<References ExternalSource="BuiltIns" Name="[nvarchar]" />
+										</Entry>
+									</Relationship>
+								</Element>
+							</Entry>
+						</Relationship>
+					</Element>
+				</Entry>
+				<Entry>
+					<Element Type="SqlSubroutineParameter" Name="[TManual].[InsertPublicationNodeDetails].[@taskLeveName]">
+						<Relationship Name="Type">
+							<Entry>
+								<Element Type="SqlTypeSpecifier">
+									<Property Name="Length" Value="200" />
+									<Relationship Name="Type">
+										<Entry>
+											<References ExternalSource="BuiltIns" Name="[nvarchar]" />
+										</Entry>
+									</Relationship>
+								</Element>
+							</Entry>
+						</Relationship>
+					</Element>
+				</Entry>
+				<Entry>
+					<Element Type="SqlSubroutineParameter" Name="[TManual].[InsertPublicationNodeDetails].[@sequenceNumber]">
+						<Relationship Name="Type">
+							<Entry>
+								<Element Type="SqlTypeSpecifier">
+									<Relationship Name="Type">
+										<Entry>
+											<References ExternalSource="BuiltIns" Name="[int]" />
+										</Entry>
+									</Relationship>
+								</Element>
+							</Entry>
+						</Relationship>
+					</Element>
+				</Entry>
+				<Entry>
+					<Element Type="SqlSubroutineParameter" Name="[TManual].[InsertPublicationNodeDetails].[@isDrawingAvailable]">
+						<Relationship Name="Type">
+							<Entry>
+								<Element Type="SqlTypeSpecifier">
+									<Relationship Name="Type">
+										<Entry>
+											<References ExternalSource="BuiltIns" Name="[bit]" />
+										</Entry>
+									</Relationship>
+								</Element>
+							</Entry>
+						</Relationship>
+					</Element>
+				</Entry>
+				<Entry>
+					<Element Type="SqlSubroutineParameter" Name="[TManual].[InsertPublicationNodeDetails].[@issueDate]">
+						<Relationship Name="Type">
+							<Entry>
+								<Element Type="SqlTypeSpecifier">
+									<Relationship Name="Type">
+										<Entry>
+											<References ExternalSource="BuiltIns" Name="[datetime]" />
+										</Entry>
+									</Relationship>
+								</Element>
+							</Entry>
+						</Relationship>
+					</Element>
+				</Entry>
+				<Entry>
+					<Element Type="SqlSubroutineParameter" Name="[TManual].[InsertPublicationNodeDetails].[@syncDate]">
+						<Relationship Name="Type">
+							<Entry>
+								<Element Type="SqlTypeSpecifier">
+									<Relationship Name="Type">
+										<Entry>
+											<References ExternalSource="BuiltIns" Name="[datetime]" />
+										</Entry>
+									</Relationship>
+								</Element>
+							</Entry>
+						</Relationship>
+					</Element>
+				</Entry>
+			</Relationship>
+			<Relationship Name="Schema">
+				<Entry>
+					<References Name="[TManual]" />
+				</Entry>
+			</Relationship>
+			<Annotation Type="SysCommentsObjectAnnotation">
+				<Property Name="CreateOffset" Value="259" />
+				<Property Name="Length" Value="1479" />
+				<Property Name="StartLine" Value="1" />
+				<Property Name="StartColumn" Value="1" />
+				<Property Name="HeaderContents" Value="&#xD;&#xA;-- =============================================&#xD;&#xA;--PROCEDURE: [TManual].[InsertTaskNodeDetails] &#xD;&#xA;--PURPOSE: Insert task node details to [TManual].[ST_Task_Node_Details]&#xD;&#xA;--CREATED: Vyshna P 01/30/2018&#xD;&#xA;-- ============================================= &#xD;&#xA;&#xD;&#xA;CREATE PROCEDURE [TManual].[InsertPublicationNodeDetails]&#xD;&#xA;&#x9;@enginePublicationId&#x9;bigint,&#xD;&#xA;&#x9;@chapterLevel&#x9;&#x9;&#x9;nvarchar(200),  &#xD;&#xA;&#x9;@sectionLevel&#x9;&#x9;&#x9;nvarchar(200), &#xD;&#xA;&#x9;@pageBlockLevel&#x9;&#x9;    nvarchar(200), &#xD;&#xA;&#x9;@functionalCode&#x9;&#x9;    nvarchar(200), &#xD;&#xA;&#x9;@taskLevelNumber&#x9;&#x9;nvarchar(200),&#xD;&#xA;&#x9;@taskLeveName&#x9;&#x9;&#x9;nvarchar(200),&#xD;&#xA;&#x9;@sequenceNumber&#x9;&#x9;&#x9;int,&#xD;&#xA;&#x9;@isDrawingAvailable&#x9;&#x9;bit,&#xD;&#xA;&#x9;@issueDate&#x9;&#x9;&#x9;&#x9;datetime,&#xD;&#xA;&#x9;@syncDate&#x9;&#x9;&#x9;&#x9;datetime&#xD;&#xA;&#xD;&#xA;AS" />
+			</Annotation>
+		</Element>
+		<Element Type="SqlTable" Name="[TManual].[OT_Manual_EIPC_Details]">
+			<Property Name="IsAnsiNullsOn" Value="True" />
+			<Relationship Name="Columns">
+				<Entry>
+					<Element Type="SqlSimpleColumn" Name="[TManual].[OT_Manual_EIPC_Details].[Id]">
+						<Property Name="IsNullable" Value="False" />
+						<Property Name="IsIdentity" Value="True" />
+						<Relationship Name="TypeSpecifier">
+							<Entry>
+								<Element Type="SqlTypeSpecifier">
+									<Relationship Name="Type">
+										<Entry>
+											<References ExternalSource="BuiltIns" Name="[bigint]" />
+										</Entry>
+									</Relationship>
+								</Element>
+							</Entry>
+						</Relationship>
+					</Element>
+				</Entry>
+				<Entry>
+					<Element Type="SqlSimpleColumn" Name="[TManual].[OT_Manual_EIPC_Details].[PublicationManualId]">
+						<Property Name="IsNullable" Value="False" />
+						<Relationship Name="TypeSpecifier">
+							<Entry>
+								<Element Type="SqlTypeSpecifier">
+									<Relationship Name="Type">
+										<Entry>
+											<References ExternalSource="BuiltIns" Name="[bigint]" />
+										</Entry>
+									</Relationship>
+								</Element>
+							</Entry>
+						</Relationship>
+					</Element>
+				</Entry>
+				<Entry>
+					<Element Type="SqlSimpleColumn" Name="[TManual].[OT_Manual_EIPC_Details].[FigOrItemNumber]">
+						<Property Name="IsNullable" Value="False" />
+						<Relationship Name="TypeSpecifier">
+							<Entry>
+								<Element Type="SqlTypeSpecifier">
+									<Property Name="Length" Value="50" />
+									<Relationship Name="Type">
+										<Entry>
+											<References ExternalSource="BuiltIns" Name="[nvarchar]" />
+										</Entry>
+									</Relationship>
+								</Element>
+							</Entry>
+						</Relationship>
+					</Element>
+				</Entry>
+				<Entry>
+					<Element Type="SqlSimpleColumn" Name="[TManual].[OT_Manual_EIPC_Details].[PartNumber]">
+						<Relationship Name="TypeSpecifier">
+							<Entry>
+								<Element Type="SqlTypeSpecifier">
+									<Property Name="Length" Value="50" />
+									<Relationship Name="Type">
+										<Entry>
+											<References ExternalSource="BuiltIns" Name="[nvarchar]" />
+										</Entry>
+									</Relationship>
+								</Element>
+							</Entry>
+						</Relationship>
+					</Element>
+				</Entry>
+				<Entry>
+					<Element Type="SqlSimpleColumn" Name="[TManual].[OT_Manual_EIPC_Details].[Nomenclature]">
+						<Relationship Name="TypeSpecifier">
+							<Entry>
+								<Element Type="SqlTypeSpecifier">
+									<Property Name="Length" Value="200" />
+									<Relationship Name="Type">
+										<Entry>
+											<References ExternalSource="BuiltIns" Name="[nvarchar]" />
+										</Entry>
+									</Relationship>
+								</Element>
+							</Entry>
+						</Relationship>
+					</Element>
+				</Entry>
+				<Entry>
+					<Element Type="SqlSimpleColumn" Name="[TManual].[OT_Manual_EIPC_Details].[UnitPerAssy]">
+						<Relationship Name="TypeSpecifier">
+							<Entry>
+								<Element Type="SqlTypeSpecifier">
+									<Relationship Name="Type">
+										<Entry>
+											<References ExternalSource="BuiltIns" Name="[int]" />
+										</Entry>
+									</Relationship>
+								</Element>
+							</Entry>
+						</Relationship>
+					</Element>
+				</Entry>
+				<Entry>
+					<Element Type="SqlSimpleColumn" Name="[TManual].[OT_Manual_EIPC_Details].[Active]">
+						<Property Name="IsNullable" Value="False" />
+						<Relationship Name="TypeSpecifier">
+							<Entry>
+								<Element Type="SqlTypeSpecifier">
+									<Relationship Name="Type">
+										<Entry>
+											<References ExternalSource="BuiltIns" Name="[bit]" />
+										</Entry>
+									</Relationship>
+								</Element>
+							</Entry>
+						</Relationship>
+						<AttachedAnnotation Disambiguator="9" />
+					</Element>
+				</Entry>
+				<Entry>
+					<Element Type="SqlSimpleColumn" Name="[TManual].[OT_Manual_EIPC_Details].[CreatedDate]">
+						<Property Name="IsNullable" Value="False" />
+						<Relationship Name="TypeSpecifier">
+							<Entry>
+								<Element Type="SqlTypeSpecifier">
+									<Relationship Name="Type">
+										<Entry>
+											<References ExternalSource="BuiltIns" Name="[datetime]" />
+										</Entry>
+									</Relationship>
+								</Element>
+							</Entry>
+						</Relationship>
+						<AttachedAnnotation Disambiguator="10" />
+					</Element>
+				</Entry>
+				<Entry>
+					<Element Type="SqlSimpleColumn" Name="[TManual].[OT_Manual_EIPC_Details].[ModifiedDate]">
+						<Relationship Name="TypeSpecifier">
+							<Entry>
+								<Element Type="SqlTypeSpecifier">
+									<Relationship Name="Type">
+										<Entry>
+											<References ExternalSource="BuiltIns" Name="[datetime]" />
+										</Entry>
+									</Relationship>
+								</Element>
+							</Entry>
+						</Relationship>
+					</Element>
+				</Entry>
+			</Relationship>
+			<Relationship Name="Schema">
+				<Entry>
+					<References Name="[TManual]" />
+				</Entry>
+			</Relationship>
+			<Annotation Type="SqlInlineConstraintAnnotation" Disambiguator="28" />
+			<AttachedAnnotation Disambiguator="21" />
+		</Element>
+		<Element Type="SqlTable" Name="[TManual].[OT_Manual_Information_Details]">
+			<Property Name="IsAnsiNullsOn" Value="True" />
+			<Relationship Name="Columns">
+				<Entry>
+					<Element Type="SqlSimpleColumn" Name="[TManual].[OT_Manual_Information_Details].[Id]">
+						<Property Name="IsNullable" Value="False" />
+						<Property Name="IsIdentity" Value="True" />
+						<Relationship Name="TypeSpecifier">
+							<Entry>
+								<Element Type="SqlTypeSpecifier">
+									<Relationship Name="Type">
+										<Entry>
+											<References ExternalSource="BuiltIns" Name="[bigint]" />
+										</Entry>
+									</Relationship>
+								</Element>
+							</Entry>
+						</Relationship>
+					</Element>
+				</Entry>
+				<Entry>
+					<Element Type="SqlSimpleColumn" Name="[TManual].[OT_Manual_Information_Details].[PublicationNodeId]">
+						<Property Name="IsNullable" Value="False" />
+						<Relationship Name="TypeSpecifier">
+							<Entry>
+								<Element Type="SqlTypeSpecifier">
+									<Relationship Name="Type">
+										<Entry>
+											<References ExternalSource="BuiltIns" Name="[bigint]" />
+										</Entry>
+									</Relationship>
+								</Element>
+							</Entry>
+						</Relationship>
+					</Element>
+				</Entry>
+				<Entry>
+					<Element Type="SqlSimpleColumn" Name="[TManual].[OT_Manual_Information_Details].[TitleName]">
+						<Relationship Name="TypeSpecifier">
+							<Entry>
+								<Element Type="SqlTypeSpecifier">
+									<Property Name="Length" Value="300" />
+									<Relationship Name="Type">
+										<Entry>
+											<References ExternalSource="BuiltIns" Name="[nvarchar]" />
+										</Entry>
+									</Relationship>
+								</Element>
+							</Entry>
+						</Relationship>
+					</Element>
+				</Entry>
+				<Entry>
+					<Element Type="SqlSimpleColumn" Name="[TManual].[OT_Manual_Information_Details].[ATANumber]">
+						<Property Name="IsNullable" Value="False" />
+						<Relationship Name="TypeSpecifier">
+							<Entry>
+								<Element Type="SqlTypeSpecifier">
+									<Property Name="Length" Value="50" />
+									<Relationship Name="Type">
+										<Entry>
+											<References ExternalSource="BuiltIns" Name="[nvarchar]" />
+										</Entry>
+									</Relationship>
+								</Element>
+							</Entry>
+						</Relationship>
+					</Element>
+				</Entry>
+				<Entry>
+					<Element Type="SqlSimpleColumn" Name="[TManual].[OT_Manual_Information_Details].[Classification]">
+						<Relationship Name="TypeSpecifier">
+							<Entry>
+								<Element Type="SqlTypeSpecifier">
+									<Property Name="Length" Value="50" />
+									<Relationship Name="Type">
+										<Entry>
+											<References ExternalSource="BuiltIns" Name="[nvarchar]" />
+										</Entry>
+									</Relationship>
+								</Element>
+							</Entry>
+						</Relationship>
+					</Element>
+				</Entry>
+				<Entry>
+					<Element Type="SqlSimpleColumn" Name="[TManual].[OT_Manual_Information_Details].[RepairSchemeNumber]">
+						<Relationship Name="TypeSpecifier">
+							<Entry>
+								<Element Type="SqlTypeSpecifier">
+									<Property Name="Length" Value="50" />
+									<Relationship Name="Type">
+										<Entry>
+											<References ExternalSource="BuiltIns" Name="[nvarchar]" />
+										</Entry>
+									</Relationship>
+								</Element>
+							</Entry>
+						</Relationship>
+					</Element>
+				</Entry>
+				<Entry>
+					<Element Type="SqlSimpleColumn" Name="[TManual].[OT_Manual_Information_Details].[EffectivityEngineMark]">
+						<Relationship Name="TypeSpecifier">
+							<Entry>
+								<Element Type="SqlTypeSpecifier">
+									<Property Name="IsMax" Value="True" />
+									<Relationship Name="Type">
+										<Entry>
+											<References ExternalSource="BuiltIns" Name="[nvarchar]" />
+										</Entry>
+									</Relationship>
+								</Element>
+							</Entry>
+						</Relationship>
+					</Element>
+				</Entry>
+				<Entry>
+					<Element Type="SqlSimpleColumn" Name="[TManual].[OT_Manual_Information_Details].[CreatedDate]">
+						<Property Name="IsNullable" Value="False" />
+						<Relationship Name="TypeSpecifier">
+							<Entry>
+								<Element Type="SqlTypeSpecifier">
+									<Relationship Name="Type">
+										<Entry>
+											<References ExternalSource="BuiltIns" Name="[datetime]" />
+										</Entry>
+									</Relationship>
+								</Element>
+							</Entry>
+						</Relationship>
+						<AttachedAnnotation Disambiguator="11" />
+					</Element>
+				</Entry>
+				<Entry>
+					<Element Type="SqlSimpleColumn" Name="[TManual].[OT_Manual_Information_Details].[ModifiedDate]">
+						<Relationship Name="TypeSpecifier">
+							<Entry>
+								<Element Type="SqlTypeSpecifier">
+									<Relationship Name="Type">
+										<Entry>
+											<References ExternalSource="BuiltIns" Name="[datetime]" />
+										</Entry>
+									</Relationship>
+								</Element>
+							</Entry>
+						</Relationship>
+					</Element>
+				</Entry>
+			</Relationship>
+			<Relationship Name="Schema">
+				<Entry>
+					<References Name="[TManual]" />
+				</Entry>
+			</Relationship>
+			<Annotation Type="SqlInlineConstraintAnnotation" Disambiguator="29" />
+			<AttachedAnnotation Disambiguator="22" />
+		</Element>
+		<Element Type="SqlPrimaryKeyConstraint" Name="[TManual].[PK_OT_Manual_Effectivity_Details]">
+			<Relationship Name="ColumnSpecifications">
+				<Entry>
+					<Element Type="SqlIndexedColumnSpecification">
+						<Relationship Name="Column">
+							<Entry>
+								<References Name="[TManual].[OT_Manual_EIPC_Details].[Id]" />
+							</Entry>
+						</Relationship>
+					</Element>
+				</Entry>
+			</Relationship>
+			<Relationship Name="DefiningTable">
+				<Entry>
+					<References Name="[TManual].[OT_Manual_EIPC_Details]" />
+				</Entry>
+			</Relationship>
+			<AttachedAnnotation Disambiguator="28" />
+		</Element>
+		<Element Type="SqlPrimaryKeyConstraint" Name="[TManual].[PK_OT_Publication_Manual_Details]">
+			<Relationship Name="ColumnSpecifications">
+				<Entry>
+					<Element Type="SqlIndexedColumnSpecification">
+						<Relationship Name="Column">
+							<Entry>
+								<References Name="[TManual].[OT_Manual_Information_Details].[Id]" />
+							</Entry>
+						</Relationship>
+					</Element>
+				</Entry>
+			</Relationship>
+			<Relationship Name="DefiningTable">
+				<Entry>
+					<References Name="[TManual].[OT_Manual_Information_Details]" />
+				</Entry>
+			</Relationship>
+			<AttachedAnnotation Disambiguator="29" />
+		</Element>
+		<Element Type="SqlPrimaryKeyConstraint" Name="[TManual].[PK_ST_Builder_Publication_Node_Details]">
+			<Relationship Name="ColumnSpecifications">
+				<Entry>
+					<Element Type="SqlIndexedColumnSpecification">
+						<Relationship Name="Column">
+							<Entry>
+								<References Name="[TManual].[ST_Publication_Node_Details].[Id]" />
+							</Entry>
+						</Relationship>
+					</Element>
+				</Entry>
+			</Relationship>
+			<Relationship Name="DefiningTable">
+				<Entry>
+					<References Name="[TManual].[ST_Publication_Node_Details]" />
+				</Entry>
+			</Relationship>
+			<Annotation Type="SqlInlineConstraintAnnotation" Disambiguator="30" />
+		</Element>
+		<Element Type="SqlPrimaryKeyConstraint" Name="[TManual].[PK_ST_Engine_Mark_Type]">
+			<Relationship Name="ColumnSpecifications">
+				<Entry>
+					<Element Type="SqlIndexedColumnSpecification">
+						<Relationship Name="Column">
+							<Entry>
+								<References Name="[TManual].[ST_Engine_Mark_Type].[Id]" />
+							</Entry>
+						</Relationship>
+					</Element>
+				</Entry>
+			</Relationship>
+			<Relationship Name="DefiningTable">
+				<Entry>
+					<References Name="[TManual].[ST_Engine_Mark_Type]" />
+				</Entry>
+			</Relationship>
+			<Annotation Type="SqlInlineConstraintAnnotation" Disambiguator="31" />
+		</Element>
+		<Element Type="SqlPrimaryKeyConstraint" Name="[TManual].[PK_ST_Engine_Publication_Details]">
+			<Relationship Name="ColumnSpecifications">
+				<Entry>
+					<Element Type="SqlIndexedColumnSpecification">
+						<Relationship Name="Column">
+							<Entry>
+								<References Name="[TManual].[ST_Engine_Publication_Details].[Id]" />
+							</Entry>
+						</Relationship>
+					</Element>
+				</Entry>
+			</Relationship>
+			<Relationship Name="DefiningTable">
+				<Entry>
+					<References Name="[TManual].[ST_Engine_Publication_Details]" />
+				</Entry>
+			</Relationship>
+			<Annotation Type="SqlInlineConstraintAnnotation" Disambiguator="32" />
+		</Element>
+		<Element Type="SqlPrimaryKeyConstraint" Name="[TManual].[PK_ST_Engine_Series_Type]">
+			<Relationship Name="ColumnSpecifications">
+				<Entry>
+					<Element Type="SqlIndexedColumnSpecification">
+						<Relationship Name="Column">
+							<Entry>
+								<References Name="[TManual].[ST_Engine_Series_Type].[Id]" />
+							</Entry>
+						</Relationship>
+					</Element>
+				</Entry>
+			</Relationship>
+			<Relationship Name="DefiningTable">
+				<Entry>
+					<References Name="[TManual].[ST_Engine_Series_Type]" />
+				</Entry>
+			</Relationship>
+			<Annotation Type="SqlInlineConstraintAnnotation" Disambiguator="33" />
+		</Element>
+		<Element Type="SqlPrimaryKeyConstraint" Name="[TManual].[PK_ST_Engine_Type]">
+			<Relationship Name="ColumnSpecifications">
+				<Entry>
+					<Element Type="SqlIndexedColumnSpecification">
+						<Relationship Name="Column">
+							<Entry>
+								<References Name="[TManual].[ST_Engine_Type].[Id]" />
+							</Entry>
+						</Relationship>
+					</Element>
+				</Entry>
+			</Relationship>
+			<Relationship Name="DefiningTable">
+				<Entry>
+					<References Name="[TManual].[ST_Engine_Type]" />
+				</Entry>
+			</Relationship>
+			<Annotation Type="SqlInlineConstraintAnnotation" Disambiguator="34" />
+		</Element>
+		<Element Type="SqlTable" Name="[TManual].[ST_Engine_Mark_Type]">
+			<Property Name="IsAnsiNullsOn" Value="True" />
+			<Relationship Name="Columns">
+				<Entry>
+					<Element Type="SqlSimpleColumn" Name="[TManual].[ST_Engine_Mark_Type].[Id]">
+						<Property Name="IsNullable" Value="False" />
+						<Property Name="IsIdentity" Value="True" />
+						<Relationship Name="TypeSpecifier">
+							<Entry>
+								<Element Type="SqlTypeSpecifier">
+									<Relationship Name="Type">
+										<Entry>
+											<References ExternalSource="BuiltIns" Name="[bigint]" />
+										</Entry>
+									</Relationship>
+								</Element>
+							</Entry>
+						</Relationship>
+					</Element>
+				</Entry>
+				<Entry>
+					<Element Type="SqlSimpleColumn" Name="[TManual].[ST_Engine_Mark_Type].[EngineSeriesTypeId]">
+						<Property Name="IsNullable" Value="False" />
+						<Relationship Name="TypeSpecifier">
+							<Entry>
+								<Element Type="SqlTypeSpecifier">
+									<Relationship Name="Type">
+										<Entry>
+											<References ExternalSource="BuiltIns" Name="[bigint]" />
+										</Entry>
+									</Relationship>
+								</Element>
+							</Entry>
+						</Relationship>
+					</Element>
+				</Entry>
+				<Entry>
+					<Element Type="SqlSimpleColumn" Name="[TManual].[ST_Engine_Mark_Type].[EngineMarkName]">
+						<Property Name="IsNullable" Value="False" />
+						<Relationship Name="TypeSpecifier">
+							<Entry>
+								<Element Type="SqlTypeSpecifier">
+									<Property Name="Length" Value="50" />
+									<Relationship Name="Type">
+										<Entry>
+											<References ExternalSource="BuiltIns" Name="[nvarchar]" />
+										</Entry>
+									</Relationship>
+								</Element>
+							</Entry>
+						</Relationship>
+					</Element>
+				</Entry>
+				<Entry>
+					<Element Type="SqlSimpleColumn" Name="[TManual].[ST_Engine_Mark_Type].[EngineMarkDescription]">
+						<Property Name="IsNullable" Value="False" />
+						<Relationship Name="TypeSpecifier">
+							<Entry>
+								<Element Type="SqlTypeSpecifier">
+									<Property Name="Length" Value="200" />
+									<Relationship Name="Type">
+										<Entry>
+											<References ExternalSource="BuiltIns" Name="[nvarchar]" />
+										</Entry>
+									</Relationship>
+								</Element>
+							</Entry>
+						</Relationship>
+					</Element>
+				</Entry>
+				<Entry>
+					<Element Type="SqlSimpleColumn" Name="[TManual].[ST_Engine_Mark_Type].[EPublicationTitleName]">
+						<Relationship Name="TypeSpecifier">
+							<Entry>
+								<Element Type="SqlTypeSpecifier">
+									<Property Name="Length" Value="200" />
+									<Relationship Name="Type">
+										<Entry>
+											<References ExternalSource="BuiltIns" Name="[nvarchar]" />
+										</Entry>
+									</Relationship>
+								</Element>
+							</Entry>
+						</Relationship>
+					</Element>
+				</Entry>
+				<Entry>
+					<Element Type="SqlSimpleColumn" Name="[TManual].[ST_Engine_Mark_Type].[SyncDate]">
+						<Relationship Name="TypeSpecifier">
+							<Entry>
+								<Element Type="SqlTypeSpecifier">
+									<Relationship Name="Type">
+										<Entry>
+											<References ExternalSource="BuiltIns" Name="[datetime]" />
+										</Entry>
+									</Relationship>
+								</Element>
+							</Entry>
+						</Relationship>
+					</Element>
+				</Entry>
+				<Entry>
+					<Element Type="SqlSimpleColumn" Name="[TManual].[ST_Engine_Mark_Type].[SyncStatus]">
+						<Relationship Name="TypeSpecifier">
+							<Entry>
+								<Element Type="SqlTypeSpecifier">
+									<Property Name="Length" Value="50" />
+									<Relationship Name="Type">
+										<Entry>
+											<References ExternalSource="BuiltIns" Name="[nvarchar]" />
+										</Entry>
+									</Relationship>
+								</Element>
+							</Entry>
+						</Relationship>
+					</Element>
+				</Entry>
+				<Entry>
+					<Element Type="SqlSimpleColumn" Name="[TManual].[ST_Engine_Mark_Type].[SequenceOrder]">
+						<Property Name="IsNullable" Value="False" />
+						<Relationship Name="TypeSpecifier">
+							<Entry>
+								<Element Type="SqlTypeSpecifier">
+									<Relationship Name="Type">
+										<Entry>
+											<References ExternalSource="BuiltIns" Name="[int]" />
+										</Entry>
+									</Relationship>
+								</Element>
+							</Entry>
+						</Relationship>
+					</Element>
+				</Entry>
+				<Entry>
+					<Element Type="SqlSimpleColumn" Name="[TManual].[ST_Engine_Mark_Type].[Active]">
+						<Property Name="IsNullable" Value="False" />
+						<Relationship Name="TypeSpecifier">
+							<Entry>
+								<Element Type="SqlTypeSpecifier">
+									<Relationship Name="Type">
+										<Entry>
+											<References ExternalSource="BuiltIns" Name="[bit]" />
+										</Entry>
+									</Relationship>
+								</Element>
+							</Entry>
+						</Relationship>
+					</Element>
+				</Entry>
+				<Entry>
+					<Element Type="SqlSimpleColumn" Name="[TManual].[ST_Engine_Mark_Type].[CreatedDate]">
+						<Property Name="IsNullable" Value="False" />
+						<Relationship Name="TypeSpecifier">
+							<Entry>
+								<Element Type="SqlTypeSpecifier">
+									<Relationship Name="Type">
+										<Entry>
+											<References ExternalSource="BuiltIns" Name="[datetime]" />
+										</Entry>
+									</Relationship>
+								</Element>
+							</Entry>
+						</Relationship>
+						<AttachedAnnotation Disambiguator="13" />
+					</Element>
+				</Entry>
+				<Entry>
+					<Element Type="SqlSimpleColumn" Name="[TManual].[ST_Engine_Mark_Type].[ModifiedDate]">
+						<Relationship Name="TypeSpecifier">
+							<Entry>
+								<Element Type="SqlTypeSpecifier">
+									<Relationship Name="Type">
+										<Entry>
+											<References ExternalSource="BuiltIns" Name="[datetime]" />
+										</Entry>
+									</Relationship>
+								</Element>
+							</Entry>
+						</Relationship>
+					</Element>
+				</Entry>
+			</Relationship>
+			<Relationship Name="Schema">
+				<Entry>
+					<References Name="[TManual]" />
+				</Entry>
+			</Relationship>
+			<AttachedAnnotation Disambiguator="31" />
+			<AttachedAnnotation Disambiguator="23" />
+		</Element>
+		<Element Type="SqlTable" Name="[TManual].[ST_Engine_Publication_Details]">
+			<Property Name="IsAnsiNullsOn" Value="True" />
+			<Relationship Name="Columns">
+				<Entry>
+					<Element Type="SqlSimpleColumn" Name="[TManual].[ST_Engine_Publication_Details].[Id]">
+						<Property Name="IsNullable" Value="False" />
+						<Property Name="IsIdentity" Value="True" />
+						<Relationship Name="TypeSpecifier">
+							<Entry>
+								<Element Type="SqlTypeSpecifier">
+									<Relationship Name="Type">
+										<Entry>
+											<References ExternalSource="BuiltIns" Name="[bigint]" />
+										</Entry>
+									</Relationship>
+								</Element>
+							</Entry>
+						</Relationship>
+					</Element>
+				</Entry>
+				<Entry>
+					<Element Type="SqlSimpleColumn" Name="[TManual].[ST_Engine_Publication_Details].[EngineTypeId]">
+						<Property Name="IsNullable" Value="False" />
+						<Relationship Name="TypeSpecifier">
+							<Entry>
+								<Element Type="SqlTypeSpecifier">
+									<Relationship Name="Type">
+										<Entry>
+											<References ExternalSource="BuiltIns" Name="[int]" />
+										</Entry>
+									</Relationship>
+								</Element>
+							</Entry>
+						</Relationship>
+					</Element>
+				</Entry>
+				<Entry>
+					<Element Type="SqlSimpleColumn" Name="[TManual].[ST_Engine_Publication_Details].[EngineSeriesId]">
+						<Property Name="IsNullable" Value="False" />
+						<Relationship Name="TypeSpecifier">
+							<Entry>
+								<Element Type="SqlTypeSpecifier">
+									<Relationship Name="Type">
+										<Entry>
+											<References ExternalSource="BuiltIns" Name="[bigint]" />
+										</Entry>
+									</Relationship>
+								</Element>
+							</Entry>
+						</Relationship>
+					</Element>
+				</Entry>
+				<Entry>
+					<Element Type="SqlSimpleColumn" Name="[TManual].[ST_Engine_Publication_Details].[EngineMarkId]">
+						<Property Name="IsNullable" Value="False" />
+						<Relationship Name="TypeSpecifier">
+							<Entry>
+								<Element Type="SqlTypeSpecifier">
+									<Relationship Name="Type">
+										<Entry>
+											<References ExternalSource="BuiltIns" Name="[bigint]" />
+										</Entry>
+									</Relationship>
+								</Element>
+							</Entry>
+						</Relationship>
+					</Element>
+				</Entry>
+				<Entry>
+					<Element Type="SqlSimpleColumn" Name="[TManual].[ST_Engine_Publication_Details].[EnginePublicationShotName]">
+						<Relationship Name="TypeSpecifier">
+							<Entry>
+								<Element Type="SqlTypeSpecifier">
+									<Property Name="Length" Value="50" />
+									<Relationship Name="Type">
+										<Entry>
+											<References ExternalSource="BuiltIns" Name="[nvarchar]" />
+										</Entry>
+									</Relationship>
+								</Element>
+							</Entry>
+						</Relationship>
+					</Element>
+				</Entry>
+				<Entry>
+					<Element Type="SqlSimpleColumn" Name="[TManual].[ST_Engine_Publication_Details].[EnginePublicationLongName]">
+						<Property Name="IsNullable" Value="False" />
+						<Relationship Name="TypeSpecifier">
+							<Entry>
+								<Element Type="SqlTypeSpecifier">
+									<Property Name="Length" Value="200" />
+									<Relationship Name="Type">
+										<Entry>
+											<References ExternalSource="BuiltIns" Name="[nvarchar]" />
+										</Entry>
+									</Relationship>
+								</Element>
+							</Entry>
+						</Relationship>
+					</Element>
+				</Entry>
+				<Entry>
+					<Element Type="SqlSimpleColumn" Name="[TManual].[ST_Engine_Publication_Details].[EnginePublicationDescription]">
+						<Relationship Name="TypeSpecifier">
+							<Entry>
+								<Element Type="SqlTypeSpecifier">
+									<Property Name="Length" Value="500" />
+									<Relationship Name="Type">
+										<Entry>
+											<References ExternalSource="BuiltIns" Name="[nvarchar]" />
+										</Entry>
+									</Relationship>
+								</Element>
+							</Entry>
+						</Relationship>
+					</Element>
+				</Entry>
+				<Entry>
+					<Element Type="SqlSimpleColumn" Name="[TManual].[ST_Engine_Publication_Details].[IssueDate]">
+						<Relationship Name="TypeSpecifier">
+							<Entry>
+								<Element Type="SqlTypeSpecifier">
+									<Relationship Name="Type">
+										<Entry>
+											<References ExternalSource="BuiltIns" Name="[datetime]" />
+										</Entry>
+									</Relationship>
+								</Element>
+							</Entry>
+						</Relationship>
+					</Element>
+				</Entry>
+				<Entry>
+					<Element Type="SqlSimpleColumn" Name="[TManual].[ST_Engine_Publication_Details].[SyncDate]">
+						<Relationship Name="TypeSpecifier">
+							<Entry>
+								<Element Type="SqlTypeSpecifier">
+									<Relationship Name="Type">
+										<Entry>
+											<References ExternalSource="BuiltIns" Name="[datetime]" />
+										</Entry>
+									</Relationship>
+								</Element>
+							</Entry>
+						</Relationship>
+					</Element>
+				</Entry>
+				<Entry>
+					<Element Type="SqlSimpleColumn" Name="[TManual].[ST_Engine_Publication_Details].[SyncStatus]">
+						<Relationship Name="TypeSpecifier">
+							<Entry>
+								<Element Type="SqlTypeSpecifier">
+									<Property Name="Length" Value="50" />
+									<Relationship Name="Type">
+										<Entry>
+											<References ExternalSource="BuiltIns" Name="[nvarchar]" />
+										</Entry>
+									</Relationship>
+								</Element>
+							</Entry>
+						</Relationship>
+						<AttachedAnnotation Disambiguator="15" />
+					</Element>
+				</Entry>
+				<Entry>
+					<Element Type="SqlSimpleColumn" Name="[TManual].[ST_Engine_Publication_Details].[SequenceOrder]">
+						<Property Name="IsNullable" Value="False" />
+						<Relationship Name="TypeSpecifier">
+							<Entry>
+								<Element Type="SqlTypeSpecifier">
+									<Relationship Name="Type">
+										<Entry>
+											<References ExternalSource="BuiltIns" Name="[int]" />
+										</Entry>
+									</Relationship>
+								</Element>
+							</Entry>
+						</Relationship>
+					</Element>
+				</Entry>
+				<Entry>
+					<Element Type="SqlSimpleColumn" Name="[TManual].[ST_Engine_Publication_Details].[Active]">
+						<Property Name="IsNullable" Value="False" />
+						<Relationship Name="TypeSpecifier">
+							<Entry>
+								<Element Type="SqlTypeSpecifier">
+									<Relationship Name="Type">
+										<Entry>
+											<References ExternalSource="BuiltIns" Name="[bit]" />
+										</Entry>
+									</Relationship>
+								</Element>
+							</Entry>
+						</Relationship>
+						<AttachedAnnotation Disambiguator="14" />
+					</Element>
+				</Entry>
+				<Entry>
+					<Element Type="SqlSimpleColumn" Name="[TManual].[ST_Engine_Publication_Details].[CreatedDate]">
+						<Property Name="IsNullable" Value="False" />
+						<Relationship Name="TypeSpecifier">
+							<Entry>
+								<Element Type="SqlTypeSpecifier">
+									<Relationship Name="Type">
+										<Entry>
+											<References ExternalSource="BuiltIns" Name="[datetime]" />
+										</Entry>
+									</Relationship>
+								</Element>
+							</Entry>
+						</Relationship>
+						<AttachedAnnotation Disambiguator="18" />
+					</Element>
+				</Entry>
+				<Entry>
+					<Element Type="SqlSimpleColumn" Name="[TManual].[ST_Engine_Publication_Details].[ModifiedDate]">
+						<Relationship Name="TypeSpecifier">
+							<Entry>
+								<Element Type="SqlTypeSpecifier">
+									<Relationship Name="Type">
+										<Entry>
+											<References ExternalSource="BuiltIns" Name="[datetime]" />
+										</Entry>
+									</Relationship>
+								</Element>
+							</Entry>
+						</Relationship>
+					</Element>
+				</Entry>
+			</Relationship>
+			<Relationship Name="Schema">
+				<Entry>
+					<References Name="[TManual]" />
+				</Entry>
+			</Relationship>
+			<AttachedAnnotation Disambiguator="32" />
+			<AttachedAnnotation Disambiguator="24" />
+			<AttachedAnnotation Disambiguator="25" />
+			<AttachedAnnotation Disambiguator="26" />
+		</Element>
+		<Element Type="SqlTable" Name="[TManual].[ST_Engine_Series_Type]">
+			<Property Name="IsAnsiNullsOn" Value="True" />
+			<Relationship Name="Columns">
+				<Entry>
+					<Element Type="SqlSimpleColumn" Name="[TManual].[ST_Engine_Series_Type].[Id]">
+						<Property Name="IsNullable" Value="False" />
+						<Property Name="IsIdentity" Value="True" />
+						<Relationship Name="TypeSpecifier">
+							<Entry>
+								<Element Type="SqlTypeSpecifier">
+									<Relationship Name="Type">
+										<Entry>
+											<References ExternalSource="BuiltIns" Name="[bigint]" />
+										</Entry>
+									</Relationship>
+								</Element>
+							</Entry>
+						</Relationship>
+					</Element>
+				</Entry>
+				<Entry>
+					<Element Type="SqlSimpleColumn" Name="[TManual].[ST_Engine_Series_Type].[EngineTypeId]">
+						<Property Name="IsNullable" Value="False" />
+						<Relationship Name="TypeSpecifier">
+							<Entry>
+								<Element Type="SqlTypeSpecifier">
+									<Relationship Name="Type">
+										<Entry>
+											<References ExternalSource="BuiltIns" Name="[int]" />
+										</Entry>
+									</Relationship>
+								</Element>
+							</Entry>
+						</Relationship>
+					</Element>
+				</Entry>
+				<Entry>
+					<Element Type="SqlSimpleColumn" Name="[TManual].[ST_Engine_Series_Type].[EngineSeriesName]">
+						<Property Name="IsNullable" Value="False" />
+						<Relationship Name="TypeSpecifier">
+							<Entry>
+								<Element Type="SqlTypeSpecifier">
+									<Property Name="Length" Value="50" />
+									<Relationship Name="Type">
+										<Entry>
+											<References ExternalSource="BuiltIns" Name="[nvarchar]" />
+										</Entry>
+									</Relationship>
+								</Element>
+							</Entry>
+						</Relationship>
+					</Element>
+				</Entry>
+				<Entry>
+					<Element Type="SqlSimpleColumn" Name="[TManual].[ST_Engine_Series_Type].[EngineSeriesDescription]">
+						<Property Name="IsNullable" Value="False" />
+						<Relationship Name="TypeSpecifier">
+							<Entry>
+								<Element Type="SqlTypeSpecifier">
+									<Property Name="Length" Value="200" />
+									<Relationship Name="Type">
+										<Entry>
+											<References ExternalSource="BuiltIns" Name="[nvarchar]" />
+										</Entry>
+									</Relationship>
+								</Element>
+							</Entry>
+						</Relationship>
+					</Element>
+				</Entry>
+				<Entry>
+					<Element Type="SqlSimpleColumn" Name="[TManual].[ST_Engine_Series_Type].[EngineMarkPageTitle]">
+						<Property Name="IsNullable" Value="False" />
+						<Relationship Name="TypeSpecifier">
+							<Entry>
+								<Element Type="SqlTypeSpecifier">
+									<Property Name="Length" Value="200" />
+									<Relationship Name="Type">
+										<Entry>
+											<References ExternalSource="BuiltIns" Name="[nvarchar]" />
+										</Entry>
+									</Relationship>
+								</Element>
+							</Entry>
+						</Relationship>
+					</Element>
+				</Entry>
+				<Entry>
+					<Element Type="SqlSimpleColumn" Name="[TManual].[ST_Engine_Series_Type].[IssueDate]">
+						<Relationship Name="TypeSpecifier">
+							<Entry>
+								<Element Type="SqlTypeSpecifier">
+									<Relationship Name="Type">
+										<Entry>
+											<References ExternalSource="BuiltIns" Name="[datetime]" />
+										</Entry>
+									</Relationship>
+								</Element>
+							</Entry>
+						</Relationship>
+					</Element>
+				</Entry>
+				<Entry>
+					<Element Type="SqlSimpleColumn" Name="[TManual].[ST_Engine_Series_Type].[SyncDate]">
+						<Relationship Name="TypeSpecifier">
+							<Entry>
+								<Element Type="SqlTypeSpecifier">
+									<Relationship Name="Type">
+										<Entry>
+											<References ExternalSource="BuiltIns" Name="[datetime]" />
+										</Entry>
+									</Relationship>
+								</Element>
+							</Entry>
+						</Relationship>
+					</Element>
+				</Entry>
+				<Entry>
+					<Element Type="SqlSimpleColumn" Name="[TManual].[ST_Engine_Series_Type].[SyncStatus]">
+						<Relationship Name="TypeSpecifier">
+							<Entry>
+								<Element Type="SqlTypeSpecifier">
+									<Property Name="Length" Value="50" />
+									<Relationship Name="Type">
+										<Entry>
+											<References ExternalSource="BuiltIns" Name="[nvarchar]" />
+										</Entry>
+									</Relationship>
+								</Element>
+							</Entry>
+						</Relationship>
+					</Element>
+				</Entry>
+				<Entry>
+					<Element Type="SqlSimpleColumn" Name="[TManual].[ST_Engine_Series_Type].[SequenceOrder]">
+						<Property Name="IsNullable" Value="False" />
+						<Relationship Name="TypeSpecifier">
+							<Entry>
+								<Element Type="SqlTypeSpecifier">
+									<Relationship Name="Type">
+										<Entry>
+											<References ExternalSource="BuiltIns" Name="[int]" />
+										</Entry>
+									</Relationship>
+								</Element>
+							</Entry>
+						</Relationship>
+					</Element>
+				</Entry>
+				<Entry>
+					<Element Type="SqlSimpleColumn" Name="[TManual].[ST_Engine_Series_Type].[Active]">
+						<Property Name="IsNullable" Value="False" />
+						<Relationship Name="TypeSpecifier">
+							<Entry>
+								<Element Type="SqlTypeSpecifier">
+									<Relationship Name="Type">
+										<Entry>
+											<References ExternalSource="BuiltIns" Name="[bit]" />
+										</Entry>
+									</Relationship>
+								</Element>
+							</Entry>
+						</Relationship>
+					</Element>
+				</Entry>
+				<Entry>
+					<Element Type="SqlSimpleColumn" Name="[TManual].[ST_Engine_Series_Type].[CreatedDate]">
+						<Property Name="IsNullable" Value="False" />
+						<Relationship Name="TypeSpecifier">
+							<Entry>
+								<Element Type="SqlTypeSpecifier">
+									<Relationship Name="Type">
+										<Entry>
+											<References ExternalSource="BuiltIns" Name="[datetime]" />
+										</Entry>
+									</Relationship>
+								</Element>
+							</Entry>
+						</Relationship>
+						<AttachedAnnotation Disambiguator="16" />
+					</Element>
+				</Entry>
+				<Entry>
+					<Element Type="SqlSimpleColumn" Name="[TManual].[ST_Engine_Series_Type].[ModifiedDate]">
+						<Relationship Name="TypeSpecifier">
+							<Entry>
+								<Element Type="SqlTypeSpecifier">
+									<Relationship Name="Type">
+										<Entry>
+											<References ExternalSource="BuiltIns" Name="[datetime]" />
+										</Entry>
+									</Relationship>
+								</Element>
+							</Entry>
+						</Relationship>
+					</Element>
+				</Entry>
+			</Relationship>
+			<Relationship Name="Schema">
+				<Entry>
+					<References Name="[TManual]" />
+				</Entry>
+			</Relationship>
+			<AttachedAnnotation Disambiguator="33" />
+			<AttachedAnnotation Disambiguator="27" />
+		</Element>
+		<Element Type="SqlTable" Name="[TManual].[ST_Engine_Type]">
+			<Property Name="IsAnsiNullsOn" Value="True" />
+			<Relationship Name="Columns">
+				<Entry>
+					<Element Type="SqlSimpleColumn" Name="[TManual].[ST_Engine_Type].[Id]">
+						<Property Name="IsNullable" Value="False" />
+						<Property Name="IsIdentity" Value="True" />
+						<Relationship Name="TypeSpecifier">
+							<Entry>
+								<Element Type="SqlTypeSpecifier">
+									<Relationship Name="Type">
+										<Entry>
+											<References ExternalSource="BuiltIns" Name="[int]" />
+										</Entry>
+									</Relationship>
+								</Element>
+							</Entry>
+						</Relationship>
+					</Element>
+				</Entry>
+				<Entry>
+					<Element Type="SqlSimpleColumn" Name="[TManual].[ST_Engine_Type].[EngineName]">
+						<Property Name="IsNullable" Value="False" />
+						<Relationship Name="TypeSpecifier">
+							<Entry>
+								<Element Type="SqlTypeSpecifier">
+									<Property Name="Length" Value="50" />
+									<Relationship Name="Type">
+										<Entry>
+											<References ExternalSource="BuiltIns" Name="[nvarchar]" />
+										</Entry>
+									</Relationship>
+								</Element>
+							</Entry>
+						</Relationship>
+					</Element>
+				</Entry>
+				<Entry>
+					<Element Type="SqlSimpleColumn" Name="[TManual].[ST_Engine_Type].[EngineDescription]">
+						<Property Name="IsNullable" Value="False" />
+						<Relationship Name="TypeSpecifier">
+							<Entry>
+								<Element Type="SqlTypeSpecifier">
+									<Property Name="Length" Value="200" />
+									<Relationship Name="Type">
+										<Entry>
+											<References ExternalSource="BuiltIns" Name="[nvarchar]" />
+										</Entry>
+									</Relationship>
+								</Element>
+							</Entry>
+						</Relationship>
+					</Element>
+				</Entry>
+				<Entry>
+					<Element Type="SqlSimpleColumn" Name="[TManual].[ST_Engine_Type].[SequenceOrder]">
+						<Property Name="IsNullable" Value="False" />
+						<Relationship Name="TypeSpecifier">
+							<Entry>
+								<Element Type="SqlTypeSpecifier">
+									<Relationship Name="Type">
+										<Entry>
+											<References ExternalSource="BuiltIns" Name="[int]" />
+										</Entry>
+									</Relationship>
+								</Element>
+							</Entry>
+						</Relationship>
+					</Element>
+				</Entry>
+				<Entry>
+					<Element Type="SqlSimpleColumn" Name="[TManual].[ST_Engine_Type].[Active]">
+						<Property Name="IsNullable" Value="False" />
+						<Relationship Name="TypeSpecifier">
+							<Entry>
+								<Element Type="SqlTypeSpecifier">
+									<Relationship Name="Type">
+										<Entry>
+											<References ExternalSource="BuiltIns" Name="[bit]" />
+										</Entry>
+									</Relationship>
+								</Element>
+							</Entry>
+						</Relationship>
+					</Element>
+				</Entry>
+				<Entry>
+					<Element Type="SqlSimpleColumn" Name="[TManual].[ST_Engine_Type].[CreatedDate]">
+						<Property Name="IsNullable" Value="False" />
+						<Relationship Name="TypeSpecifier">
+							<Entry>
+								<Element Type="SqlTypeSpecifier">
+									<Relationship Name="Type">
+										<Entry>
+											<References ExternalSource="BuiltIns" Name="[datetime]" />
+										</Entry>
+									</Relationship>
+								</Element>
+							</Entry>
+						</Relationship>
+						<AttachedAnnotation Disambiguator="17" />
+					</Element>
+				</Entry>
+				<Entry>
+					<Element Type="SqlSimpleColumn" Name="[TManual].[ST_Engine_Type].[ModifiedDate]">
+						<Relationship Name="TypeSpecifier">
+							<Entry>
+								<Element Type="SqlTypeSpecifier">
+									<Relationship Name="Type">
+										<Entry>
+											<References ExternalSource="BuiltIns" Name="[datetime]" />
+										</Entry>
+									</Relationship>
+								</Element>
+							</Entry>
+						</Relationship>
+					</Element>
+				</Entry>
+			</Relationship>
+			<Relationship Name="Schema">
+				<Entry>
+					<References Name="[TManual]" />
+				</Entry>
+			</Relationship>
+			<AttachedAnnotation Disambiguator="34" />
+		</Element>
+		<Element Type="SqlTable" Name="[TManual].[ST_Publication_Node_Details]">
+			<Property Name="IsAnsiNullsOn" Value="True" />
+			<Relationship Name="Columns">
+				<Entry>
+					<Element Type="SqlSimpleColumn" Name="[TManual].[ST_Publication_Node_Details].[Id]">
+						<Property Name="IsNullable" Value="False" />
+						<Property Name="IsIdentity" Value="True" />
+						<Relationship Name="TypeSpecifier">
+							<Entry>
+								<Element Type="SqlTypeSpecifier">
+									<Relationship Name="Type">
+										<Entry>
+											<References ExternalSource="BuiltIns" Name="[bigint]" />
+										</Entry>
+									</Relationship>
+								</Element>
+							</Entry>
+						</Relationship>
+					</Element>
+				</Entry>
+				<Entry>
+					<Element Type="SqlSimpleColumn" Name="[TManual].[ST_Publication_Node_Details].[EnginePublicationId]">
+						<Property Name="IsNullable" Value="False" />
+						<Relationship Name="TypeSpecifier">
+							<Entry>
+								<Element Type="SqlTypeSpecifier">
+									<Relationship Name="Type">
+										<Entry>
+											<References ExternalSource="BuiltIns" Name="[int]" />
+										</Entry>
+									</Relationship>
+								</Element>
+							</Entry>
+						</Relationship>
+					</Element>
+				</Entry>
+				<Entry>
+					<Element Type="SqlSimpleColumn" Name="[TManual].[ST_Publication_Node_Details].[ChapterLevel]">
+						<Relationship Name="TypeSpecifier">
+							<Entry>
+								<Element Type="SqlTypeSpecifier">
+									<Property Name="Length" Value="200" />
+									<Relationship Name="Type">
+										<Entry>
+											<References ExternalSource="BuiltIns" Name="[nvarchar]" />
+										</Entry>
+									</Relationship>
+								</Element>
+							</Entry>
+						</Relationship>
+					</Element>
+				</Entry>
+				<Entry>
+					<Element Type="SqlSimpleColumn" Name="[TManual].[ST_Publication_Node_Details].[SectionLevel]">
+						<Relationship Name="TypeSpecifier">
+							<Entry>
+								<Element Type="SqlTypeSpecifier">
+									<Property Name="Length" Value="200" />
+									<Relationship Name="Type">
+										<Entry>
+											<References ExternalSource="BuiltIns" Name="[nvarchar]" />
+										</Entry>
+									</Relationship>
+								</Element>
+							</Entry>
+						</Relationship>
+					</Element>
+				</Entry>
+				<Entry>
+					<Element Type="SqlSimpleColumn" Name="[TManual].[ST_Publication_Node_Details].[PageBlockLevelName]">
+						<Relationship Name="TypeSpecifier">
+							<Entry>
+								<Element Type="SqlTypeSpecifier">
+									<Property Name="Length" Value="200" />
+									<Relationship Name="Type">
+										<Entry>
+											<References ExternalSource="BuiltIns" Name="[nvarchar]" />
+										</Entry>
+									</Relationship>
+								</Element>
+							</Entry>
+						</Relationship>
+					</Element>
+				</Entry>
+				<Entry>
+					<Element Type="SqlSimpleColumn" Name="[TManual].[ST_Publication_Node_Details].[FunctionalCode]">
+						<Relationship Name="TypeSpecifier">
+							<Entry>
+								<Element Type="SqlTypeSpecifier">
+									<Relationship Name="Type">
+										<Entry>
+											<References ExternalSource="BuiltIns" Name="[int]" />
+										</Entry>
+									</Relationship>
+								</Element>
+							</Entry>
+						</Relationship>
+					</Element>
+				</Entry>
+				<Entry>
+					<Element Type="SqlSimpleColumn" Name="[TManual].[ST_Publication_Node_Details].[TaskLevelNumber]">
+						<Property Name="IsNullable" Value="False" />
+						<Relationship Name="TypeSpecifier">
+							<Entry>
+								<Element Type="SqlTypeSpecifier">
+									<Property Name="Length" Value="200" />
+									<Relationship Name="Type">
+										<Entry>
+											<References ExternalSource="BuiltIns" Name="[nvarchar]" />
+										</Entry>
+									</Relationship>
+								</Element>
+							</Entry>
+						</Relationship>
+					</Element>
+				</Entry>
+				<Entry>
+					<Element Type="SqlSimpleColumn" Name="[TManual].[ST_Publication_Node_Details].[TaskLevelName]">
+						<Relationship Name="TypeSpecifier">
+							<Entry>
+								<Element Type="SqlTypeSpecifier">
+									<Property Name="Length" Value="200" />
+									<Relationship Name="Type">
+										<Entry>
+											<References ExternalSource="BuiltIns" Name="[nvarchar]" />
+										</Entry>
+									</Relationship>
+								</Element>
+							</Entry>
+						</Relationship>
+					</Element>
+				</Entry>
+				<Entry>
+					<Element Type="SqlSimpleColumn" Name="[TManual].[ST_Publication_Node_Details].[SequenceNumber]">
+						<Property Name="IsNullable" Value="False" />
+						<Relationship Name="TypeSpecifier">
+							<Entry>
+								<Element Type="SqlTypeSpecifier">
+									<Relationship Name="Type">
+										<Entry>
+											<References ExternalSource="BuiltIns" Name="[int]" />
+										</Entry>
+									</Relationship>
+								</Element>
+							</Entry>
+						</Relationship>
+					</Element>
+				</Entry>
+				<Entry>
+					<Element Type="SqlSimpleColumn" Name="[TManual].[ST_Publication_Node_Details].[IsDrawingAvailable]">
+						<Property Name="IsNullable" Value="False" />
+						<Relationship Name="TypeSpecifier">
+							<Entry>
+								<Element Type="SqlTypeSpecifier">
+									<Relationship Name="Type">
+										<Entry>
+											<References ExternalSource="BuiltIns" Name="[bit]" />
+										</Entry>
+									</Relationship>
+								</Element>
+							</Entry>
+						</Relationship>
+						<AttachedAnnotation Disambiguator="19" />
+					</Element>
+				</Entry>
+				<Entry>
+					<Element Type="SqlSimpleColumn" Name="[TManual].[ST_Publication_Node_Details].[IssueDate]">
+						<Relationship Name="TypeSpecifier">
+							<Entry>
+								<Element Type="SqlTypeSpecifier">
+									<Relationship Name="Type">
+										<Entry>
+											<References ExternalSource="BuiltIns" Name="[datetime]" />
+										</Entry>
+									</Relationship>
+								</Element>
+							</Entry>
+						</Relationship>
+					</Element>
+				</Entry>
+				<Entry>
+					<Element Type="SqlSimpleColumn" Name="[TManual].[ST_Publication_Node_Details].[SyncDate]">
+						<Relationship Name="TypeSpecifier">
+							<Entry>
+								<Element Type="SqlTypeSpecifier">
+									<Relationship Name="Type">
+										<Entry>
+											<References ExternalSource="BuiltIns" Name="[datetime]" />
+										</Entry>
+									</Relationship>
+								</Element>
+							</Entry>
+						</Relationship>
+					</Element>
+				</Entry>
+				<Entry>
+					<Element Type="SqlSimpleColumn" Name="[TManual].[ST_Publication_Node_Details].[SyncStatus]">
+						<Property Name="IsNullable" Value="False" />
+						<Relationship Name="TypeSpecifier">
+							<Entry>
+								<Element Type="SqlTypeSpecifier">
+									<Property Name="Length" Value="50" />
+									<Relationship Name="Type">
+										<Entry>
+											<References ExternalSource="BuiltIns" Name="[nvarchar]" />
+										</Entry>
+									</Relationship>
+								</Element>
+							</Entry>
+						</Relationship>
+						<AttachedAnnotation Disambiguator="20" />
+					</Element>
+				</Entry>
+				<Entry>
+					<Element Type="SqlSimpleColumn" Name="[TManual].[ST_Publication_Node_Details].[SequenceOrder]">
+						<Property Name="IsNullable" Value="False" />
+						<Relationship Name="TypeSpecifier">
+							<Entry>
+								<Element Type="SqlTypeSpecifier">
+									<Relationship Name="Type">
+										<Entry>
+											<References ExternalSource="BuiltIns" Name="[int]" />
+										</Entry>
+									</Relationship>
+								</Element>
+							</Entry>
+						</Relationship>
+					</Element>
+				</Entry>
+				<Entry>
+					<Element Type="SqlSimpleColumn" Name="[TManual].[ST_Publication_Node_Details].[Active]">
+						<Relationship Name="TypeSpecifier">
+							<Entry>
+								<Element Type="SqlTypeSpecifier">
+									<Relationship Name="Type">
+										<Entry>
+											<References ExternalSource="BuiltIns" Name="[bit]" />
+										</Entry>
+									</Relationship>
+								</Element>
+							</Entry>
+						</Relationship>
+					</Element>
+				</Entry>
+				<Entry>
+					<Element Type="SqlSimpleColumn" Name="[TManual].[ST_Publication_Node_Details].[CreatedDate]">
+						<Property Name="IsNullable" Value="False" />
+						<Relationship Name="TypeSpecifier">
+							<Entry>
+								<Element Type="SqlTypeSpecifier">
+									<Relationship Name="Type">
+										<Entry>
+											<References ExternalSource="BuiltIns" Name="[datetime]" />
+										</Entry>
+									</Relationship>
+								</Element>
+							</Entry>
+						</Relationship>
+						<AttachedAnnotation Disambiguator="12" />
+					</Element>
+				</Entry>
+				<Entry>
+					<Element Type="SqlSimpleColumn" Name="[TManual].[ST_Publication_Node_Details].[ModifiedDate]">
+						<Relationship Name="TypeSpecifier">
+							<Entry>
+								<Element Type="SqlTypeSpecifier">
+									<Relationship Name="Type">
+										<Entry>
+											<References ExternalSource="BuiltIns" Name="[datetime]" />
+										</Entry>
+									</Relationship>
+								</Element>
+							</Entry>
+						</Relationship>
+					</Element>
+				</Entry>
+			</Relationship>
+			<Relationship Name="Schema">
+				<Entry>
+					<References Name="[TManual]" />
+				</Entry>
+			</Relationship>
+			<AttachedAnnotation Disambiguator="30" />
+		</Element>
+	</Model>
+</DataSchemaModel>

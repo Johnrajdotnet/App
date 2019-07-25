@@ -1,0 +1,3 @@
+﻿CREATE SCHEMA [SyncTM]
+    AUTHORIZATION [dbo];
+

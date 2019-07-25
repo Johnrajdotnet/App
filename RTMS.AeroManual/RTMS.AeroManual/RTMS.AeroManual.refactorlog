@@ -1,0 +1,24 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Operations Version="1.0" xmlns="http://schemas.microsoft.com/sqlserver/dac/Serialization/2012/02">
+  <Operation Name="Rename Refactor" Key="016b7984-ff75-412b-a5b3-b3f93779c915" ChangeDateTime="02/23/2018 05:32:50">
+    <Property Name="ElementName" Value="[TManual].[OT_Manual_Information_Details].[TitleName]" />
+    <Property Name="ElementType" Value="SqlSimpleColumn" />
+    <Property Name="ParentElementName" Value="[TManual].[OT_Manual_Information_Details]" />
+    <Property Name="ParentElementType" Value="SqlTable" />
+    <Property Name="NewName" Value="TaskOrTitleName" />
+  </Operation>
+  <Operation Name="Rename Refactor" Key="9e1969a4-1177-4f3a-9e8e-6303e5b5b339" ChangeDateTime="02/23/2018 05:33:13">
+    <Property Name="ElementName" Value="[TManual].[OT_Manual_Information_Details].[Classification]" />
+    <Property Name="ElementType" Value="SqlSimpleColumn" />
+    <Property Name="ParentElementName" Value="[TManual].[OT_Manual_Information_Details]" />
+    <Property Name="ParentElementType" Value="SqlTable" />
+    <Property Name="NewName" Value="FunctionalCode" />
+  </Operation>
+  <Operation Name="Rename Refactor" Key="bd2adbcc-50ce-4052-b060-c81f28d18de4" ChangeDateTime="02/23/2018 09:27:36">
+    <Property Name="ElementName" Value="[TManual].[OT_Manual_EIPC_Details].[PublicationManualId]" />
+    <Property Name="ElementType" Value="SqlSimpleColumn" />
+    <Property Name="ParentElementName" Value="[TManual].[OT_Manual_EIPC_Details]" />
+    <Property Name="ParentElementType" Value="SqlTable" />
+    <Property Name="NewName" Value="PublicationNodeId" />
+  </Operation>
+</Operations>
