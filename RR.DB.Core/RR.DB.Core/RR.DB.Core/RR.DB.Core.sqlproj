@@ -1,0 +1,134 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <Name>RR.DB.Core</Name>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectVersion>4.1</ProjectVersion>
+    <ProjectGuid>{228579d4-28b7-4c87-9dcd-eca4e4d81e19}</ProjectGuid>
+    <DSP>Microsoft.Data.Tools.Schema.Sql.Sql120DatabaseSchemaProvider</DSP>
+    <OutputType>Database</OutputType>
+    <RootPath>
+    </RootPath>
+    <RootNamespace>RR.DB.Core</RootNamespace>
+    <AssemblyName>RR.DB.Core</AssemblyName>
+    <ModelCollation>1033, CI</ModelCollation>
+    <DefaultFileStructure>BySchemaAndSchemaType</DefaultFileStructure>
+    <DeployToDatabase>True</DeployToDatabase>
+    <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
+    <TargetLanguage>CS</TargetLanguage>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <SqlServerVerification>False</SqlServerVerification>
+    <IncludeCompositeObjects>True</IncludeCompositeObjects>
+    <TargetDatabaseSet>True</TargetDatabaseSet>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <OutputPath>bin\Release\</OutputPath>
+    <BuildScriptName>$(MSBuildProjectName).sql</BuildScriptName>
+    <TreatWarningsAsErrors>False</TreatWarningsAsErrors>
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <DefineDebug>false</DefineDebug>
+    <DefineTrace>true</DefineTrace>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <OutputPath>bin\Debug\</OutputPath>
+    <BuildScriptName>$(MSBuildProjectName).sql</BuildScriptName>
+    <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <DefineDebug>true</DefineDebug>
+    <DefineTrace>true</DefineTrace>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup>
+    <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">11.0</VisualStudioVersion>
+    <!-- Default to the v11.0 targets path if the targets file for the current VS version is not found -->
+    <SSDTExists Condition="Exists('$(MSBuildExtensionsPath)\Microsoft\VisualStudio\v$(VisualStudioVersion)\SSDT\Microsoft.Data.Tools.Schema.SqlTasks.targets')">True</SSDTExists>
+    <VisualStudioVersion Condition="'$(SSDTExists)' == ''">11.0</VisualStudioVersion>
+  </PropertyGroup>
+  <Import Condition="'$(SQLDBExtensionsRefPath)' != ''" Project="$(SQLDBExtensionsRefPath)\Microsoft.Data.Tools.Schema.SqlTasks.targets" />
+  <Import Condition="'$(SQLDBExtensionsRefPath)' == ''" Project="$(MSBuildExtensionsPath)\Microsoft\VisualStudio\v$(VisualStudioVersion)\SSDT\Microsoft.Data.Tools.Schema.SqlTasks.targets" />
+  <ItemGroup>
+    <Folder Include="Properties" />
+    <Folder Include="Admin" />
+    <Folder Include="Admin\Stored Procedures" />
+    <Folder Include="Admin\Tables" />
+    <Folder Include="bin" />
+    <Folder Include="bin\Debug" />
+    <Folder Include="obj" />
+    <Folder Include="obj\Debug" />
+    <Folder Include="Security" />
+    <Folder Include="dbo" />
+    <Folder Include="dbo\Functions" />
+    <Folder Include="dbo\Stored Procedures" />
+    <Folder Include="dbo\Tables" />
+    <Folder Include="Edc" />
+    <Folder Include="Edc\Tables" />
+    <Folder Include="Edc\Stored Procedures" />
+  </ItemGroup>
+  <ItemGroup>
+    <Build Include="Admin\Stored Procedures\GetActiveOrDeActiveDetails.sql" />
+    <Build Include="Admin\Stored Procedures\GetBusinessNameByBusinessId.sql" />
+    <Build Include="Admin\Stored Procedures\GetLibraryContentDetails.sql" />
+    <Build Include="Admin\Stored Procedures\GetRoleConfigurationDetails.sql" />
+    <Build Include="Admin\Stored Procedures\GetUserActiveDeactivateDetails.sql" />
+    <Build Include="Admin\Stored Procedures\GetUserDetails.sql" />
+    <Build Include="Admin\Stored Procedures\GetUsersBasedOnRole.sql" />
+    <Build Include="Admin\Stored Procedures\InsertNewUserRegistration.sql" />
+    <Build Include="Admin\Stored Procedures\SaveRoleConfigurationDetails.sql" />
+    <Build Include="Admin\Stored Procedures\UpdateUserActiveDeactivateStatus.sql" />
+    <Build Include="Admin\Tables\OT_User_RR_Credential_Active.sql" />
+    <Build Include="Admin\Tables\ST_Business_Module.sql" />
+    <Build Include="Admin\Tables\ST_Library_Content_Details.sql" />
+    <Build Include="Admin\Tables\ST_Program_Details.sql" />
+    <Build Include="Admin\Tables\ST_Program_Task_WorkFlow_Step.sql" />
+    <Build Include="Admin\Tables\ST_Roles.sql" />
+    <Build Include="Admin\Tables\ST_Task_Details.sql" />
+    <Build Include="Admin\Tables\ST_User_Role_Module.sql" />
+    <Build Include="Admin\Tables\ST_User_RR_Credential.sql" />
+    <Build Include="Admin\Tables\ST_Users.sql" />
+    <Build Include="Security\Admin.sql" />
+    <Build Include="dbo\Functions\CheckTVMetOrMissed.sql" />
+    <Build Include="dbo\Functions\CheckTVMetOrMissedForRBody.sql" />
+    <Build Include="dbo\Functions\ConvertDateFormatIntToDateTime.sql" />
+    <Build Include="dbo\Functions\GetAllManagerBottomUp.sql" />
+    <Build Include="dbo\Functions\GetAllSPCDetailsByProgram.sql" />
+    <Build Include="dbo\Functions\GetAllUserListByBusinessModule.sql" />
+    <Build Include="dbo\Functions\GetAllUserListByProgramList.sql" />
+    <Build Include="dbo\Functions\GetDateDifferenceInDays.sql" />
+    <Build Include="dbo\Functions\GetEngineerNameByRoleGuid.sql" />
+    <Build Include="dbo\Functions\GetMenuOrSubmenuByProgram.sql" />
+    <Build Include="dbo\Functions\StringToTableValue.sql" />
+    <Build Include="dbo\Functions\StringToTableValueWithIdentity.sql" />
+    <Build Include="dbo\Stored Procedures\GetCredentialInfoForChangePassword.sql" />
+    <Build Include="dbo\Stored Procedures\GetUserCredentialDetailsForService.sql" />
+    <Build Include="dbo\Stored Procedures\GetUserCredentialsApp.sql" />
+    <Build Include="dbo\Stored Procedures\GetUserLoginData.sql" />
+    <Build Include="dbo\Stored Procedures\LogError.sql" />
+    <Build Include="dbo\Stored Procedures\PrintError.sql" />
+    <Build Include="dbo\Tables\DatabaseLog.sql" />
+    <Build Include="dbo\Tables\ErrorLog.sql" />
+    <Build Include="dbo\Tables\RTMSBuildVersion.sql" />
+    <Build Include="Edc\Tables\OT_TV_Drawing_Details.sql" />
+    <Build Include="Security\Edc.sql" />
+    <Build Include="Edc\Stored Procedures\GetDrawingInfoByPartnumSeries.sql" />
+    <Build Include="Edc\Stored Procedures\GetTvDrawingDetails.sql" />
+    <Build Include="Edc\Stored Procedures\SaveDrawingDetails.sql" />
+    <Build Include="dbo\Stored Procedures\SaveOrUpdateUserPasswordDetails.sql" />
+    <Build Include="Admin\Stored Procedures\InsertDBLinkObject.sql" />
+    <Build Include="dbo\Stored Procedures\UpdateActiveDeActiveStatus.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="RR.DB.Core.sqlproj.user" />
+  </ItemGroup>
+  <ItemGroup>
+    <PostDeploy Include="Script.PostDeployementApp.sql" />
+  </ItemGroup>
+</Project>

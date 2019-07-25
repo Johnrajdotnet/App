@@ -1,0 +1,9 @@
+D:\John\WorkStation\RTMS\Work Produts\RTMS-Automation\Development\Source\RTMS.Database\RR.DB.Core\RR.DB.Core\RR.DB.Core\bin\Debug\RR.DB.Core.dacpac
+D:\John\WorkStation\RTMS\Work Produts\RTMS-Automation\Development\Source\RTMS.Database\RR.DB.Core\RR.DB.Core\RR.DB.Core\bin\Debug\RR.DB.Core.dll
+D:\John\WorkStation\RTMS\Work Produts\RTMS-Automation\Development\Source\RTMS.Database\RR.DB.Core\RR.DB.Core\RR.DB.Core\bin\Debug\RR.DB.Core.pdb
+D:\John\WorkStation\RTMS\Work Produts\RTMS-Automation\Development\Source\RTMS.Database\RR.DB.Core\RR.DB.Core\RR.DB.Core\obj\Debug\Model.xml
+D:\John\WorkStation\RTMS\Work Produts\RTMS-Automation\Development\Source\RTMS.Database\RR.DB.Core\RR.DB.Core\RR.DB.Core\obj\Debug\refactor.xml
+D:\John\WorkStation\RTMS\Work Produts\RTMS-Automation\Development\Source\RTMS.Database\RR.DB.Core\RR.DB.Core\RR.DB.Core\obj\Debug\postdeploy.sql
+D:\John\WorkStation\RTMS\Work Produts\RTMS-Automation\Development\Source\RTMS.Database\RR.DB.Core\RR.DB.Core\RR.DB.Core\obj\Debug\predeploy.sql
+D:\John\WorkStation\RTMS\Work Produts\RTMS-Automation\Development\Source\RTMS.Database\RR.DB.Core\RR.DB.Core\RR.DB.Core\obj\Debug\RR.DB.Core.dll
+D:\John\WorkStation\RTMS\Work Produts\RTMS-Automation\Development\Source\RTMS.Database\RR.DB.Core\RR.DB.Core\RR.DB.Core\obj\Debug\RR.DB.Core.pdb
